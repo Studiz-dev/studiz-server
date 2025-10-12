@@ -1,12 +1,12 @@
 package com.studiz.global.exception;
 
-public class DuplicateEmailException extends CustomException {
+public class DuplicateLoginIdException extends CustomException {
     
-    public DuplicateEmailException() {
+    public DuplicateLoginIdException() {
         super(ErrorCode.DUPLICATE_LOGIN_ID);
     }
     
-    public DuplicateEmailException(String message) {
+    public DuplicateLoginIdException(String message) {
         super(ErrorCode.DUPLICATE_LOGIN_ID, message);
     }
 }
