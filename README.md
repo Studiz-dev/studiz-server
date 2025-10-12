@@ -113,8 +113,6 @@ src/main/java/com/studiz/
 - password
 - name
 - profile_image_url
-- bio
-- email
 - role (USER, ADMIN)
 - status (ACTIVE, INACTIVE, SUSPENDED)
 - created_at
