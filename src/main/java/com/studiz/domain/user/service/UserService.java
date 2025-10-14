@@ -38,7 +38,6 @@ public class UserService {
                 .loginId(request.getLoginId())
                 .password(encodedPassword)
                 .name(request.getName())
-                .email(request.getEmail())
                 .build();
 
         User savedUser = userRepository.save(user);

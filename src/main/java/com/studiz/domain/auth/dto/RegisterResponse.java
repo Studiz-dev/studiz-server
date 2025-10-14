@@ -13,7 +13,6 @@ public class RegisterResponse {
     private Long id;
     private String loginId;
     private String name;
-    private String email;
     private LocalDateTime createdAt;
 
     public static RegisterResponse from(User user) {
@@ -21,7 +20,6 @@ public class RegisterResponse {
                 .id(user.getId())
                 .loginId(user.getLoginId())
                 .name(user.getName())
-                .email(user.getEmail())
                 .createdAt(user.getCreatedAt())
                 .build();
     }
