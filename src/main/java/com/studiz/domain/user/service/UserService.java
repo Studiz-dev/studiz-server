@@ -1,10 +1,14 @@
 package com.studiz.domain.user.service;
 
+import com.studiz.domain.auth.dto.LoginRequest;
+import com.studiz.domain.auth.dto.LoginResponse;
 import com.studiz.domain.auth.dto.RegisterRequest;
 import com.studiz.domain.auth.dto.RegisterResponse;
 import com.studiz.domain.user.entity.User;
 import com.studiz.domain.user.repository.UserRepository;
 import com.studiz.global.exception.DuplicateLoginIdException;
+import com.studiz.global.exception.InvalidPasswordException;
+import com.studiz.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +48,27 @@ public class UserService {
         log.info("회원가입 완료: userId={}, loginId={}", savedUser.getId(), savedUser.getLoginId());
 
         return RegisterResponse.from(savedUser);
+    }
+
+    @Transactional
+    public LoginResponse login(LoginRequest request) {
+        log.info("로그인 시도: loginId={}", request.getLoginId());
+
+        // 사용자 조회
+        User user = userRepository.findByLoginId(request.getLoginId())
+                .orElseThrow(() -> {
+                    log.warn("존재하지 않는 아이디로 로그인 시도: {}", request.getLoginId());
+                    return new UserNotFoundException();
+                });
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.warn("잘못된 비밀번호로 로그인 시도: loginId={}", request.getLoginId());
+            throw new InvalidPasswordException();
+        }
+
+        log.info("로그인 성공: userId={}, loginId={}", user.getId(), user.getLoginId());
+        return LoginResponse.from(user);
     }
 }
 
