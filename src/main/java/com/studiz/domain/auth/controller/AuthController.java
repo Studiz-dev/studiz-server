@@ -1,5 +1,7 @@
 package com.studiz.domain.auth.controller;
 
+import com.studiz.domain.auth.dto.LoginRequest;
+import com.studiz.domain.auth.dto.LoginResponse;
 import com.studiz.domain.auth.dto.RegisterRequest;
 import com.studiz.domain.auth.dto.RegisterResponse;
 import com.studiz.domain.user.service.UserService;
@@ -30,6 +32,14 @@ public class AuthController {
         log.info("회원가입 요청: loginId={}", request.getLoginId());
         RegisterResponse response = userService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "사용자 로그인을 처리합니다.")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        log.info("로그인 요청: loginId={}", request.getLoginId());
+        LoginResponse response = userService.login(request);
+        return ResponseEntity.ok(response);
     }
 }
 
