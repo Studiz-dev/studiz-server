@@ -1,6 +1,7 @@
 package com.studiz.domain.studymember.repository;
 
 import com.studiz.domain.studymember.entity.StudyMember;
+import com.studiz.domain.studymember.entity.StudyMemberRole;
 import com.studiz.domain.study.entity.Study;
 import com.studiz.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,8 @@ public interface StudyMemberRepository extends JpaRepository<StudyMember, Long> 
     List<StudyMember> findByStudy(Study study);
 
     List<StudyMember> findByUser(User user);
+    
+    Optional<StudyMember> findByIdAndStudy(Long id, Study study);
+    
+    long countByStudyAndRole(Study study, StudyMemberRole role);
 }

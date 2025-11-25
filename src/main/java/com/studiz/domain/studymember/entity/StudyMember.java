@@ -52,4 +52,8 @@ public class StudyMember {
     public void promote() {
         this.role = StudyMemberRole.OWNER;
     }
+    
+    public void demoteToMember() {
+        this.role = StudyMemberRole.MEMBER;
+    }
 }

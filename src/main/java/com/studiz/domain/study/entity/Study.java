@@ -63,4 +63,16 @@ public class Study {
     public void complete() {
         this.status = StudyStatus.COMPLETED;
     }
+    
+    public void updateInfo(String name, String description, StudyStatus status) {
+        if (name != null && !name.isBlank()) {
+            this.name = name;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+        if (status != null) {
+            this.status = status;
+        }
+    }
 }
