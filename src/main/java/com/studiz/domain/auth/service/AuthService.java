@@ -32,13 +32,13 @@ public class AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(principal.getUsername());
         String refreshToken = jwtTokenProvider.generateRefreshToken(principal.getUsername());
 
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .accessTokenExpiresIn(jwtTokenProvider.getAccessTokenValidity())
-                .refreshToken(refreshToken)
-                .refreshTokenExpiresIn(jwtTokenProvider.getRefreshTokenValidity())
-                .tokenType("Bearer")
-                .build();
+        return LoginResponse.of(
+                principal.getUser(),
+                accessToken,
+                jwtTokenProvider.getAccessTokenValidity(),
+                refreshToken,
+                jwtTokenProvider.getRefreshTokenValidity(),
+                "Bearer"
+        );
     }
 }
-
