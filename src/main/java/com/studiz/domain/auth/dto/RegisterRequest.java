@@ -26,8 +26,5 @@ public class RegisterRequest {
     @NotBlank(message = "이름은 필수입니다.")
     @Size(min = 2, max = 50, message = "이름은 2~50자 사이여야 합니다.")
     private String name;
-
-    @Size(max = 100, message = "이메일은 100자 이하여야 합니다.")
-    private String email;
 }
 

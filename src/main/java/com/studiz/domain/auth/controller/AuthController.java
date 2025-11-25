@@ -36,6 +36,17 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "사용자 로그인을 처리합니다.")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        log.info("로그인 요청: loginId={}", request.getLoginId());
+        LoginResponse response = userService.login(request);
+        return ResponseEntity.ok(response);
+    }
+}
+
+
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "로그인 성공 시 JWT 토큰을 발급합니다.")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {

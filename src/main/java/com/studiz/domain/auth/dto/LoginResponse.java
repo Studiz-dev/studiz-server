@@ -17,12 +17,12 @@ public class LoginResponse {
     private String refreshToken;
     private long refreshTokenExpiresIn;
     private String tokenType;
-    
+
     private Long userId;
     private String loginId;
     private String name;
     private String message;
-    
+
     public static LoginResponse of(User user,
                                    String accessToken,
                                    long accessTokenExpiresIn,
@@ -35,6 +35,7 @@ public class LoginResponse {
                 .refreshToken(refreshToken)
                 .refreshTokenExpiresIn(refreshTokenExpiresIn)
                 .tokenType(tokenType)
+
                 .userId(user.getId())
                 .loginId(user.getLoginId())
                 .name(user.getName())
