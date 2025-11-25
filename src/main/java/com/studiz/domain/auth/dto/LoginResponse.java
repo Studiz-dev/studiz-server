@@ -12,13 +12,30 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginResponse {
 
+    private String accessToken;
+    private long accessTokenExpiresIn;
+    private String refreshToken;
+    private long refreshTokenExpiresIn;
+    private String tokenType;
+
     private Long userId;
     private String loginId;
     private String name;
     private String message;
 
-    public static LoginResponse from(User user) {
+    public static LoginResponse of(User user,
+                                   String accessToken,
+                                   long accessTokenExpiresIn,
+                                   String refreshToken,
+                                   long refreshTokenExpiresIn,
+                                   String tokenType) {
         return LoginResponse.builder()
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn)
+                .refreshToken(refreshToken)
+                .refreshTokenExpiresIn(refreshTokenExpiresIn)
+                .tokenType(tokenType)
+
                 .userId(user.getId())
                 .loginId(user.getLoginId())
                 .name(user.getName())
@@ -26,4 +43,3 @@ public class LoginResponse {
                 .build();
     }
 }
-

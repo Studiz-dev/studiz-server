@@ -4,6 +4,7 @@ import com.studiz.domain.auth.dto.LoginRequest;
 import com.studiz.domain.auth.dto.LoginResponse;
 import com.studiz.domain.auth.dto.RegisterRequest;
 import com.studiz.domain.auth.dto.RegisterResponse;
+import com.studiz.domain.auth.service.AuthService;
 import com.studiz.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/register")
     @Operation(summary = "회원가입", description = "새로운 사용자를 등록합니다.")
@@ -33,6 +35,7 @@ public class AuthController {
         RegisterResponse response = userService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "사용자 로그인을 처리합니다.")
@@ -43,3 +46,10 @@ public class AuthController {
     }
 }
 
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "로그인 성공 시 JWT 토큰을 발급합니다.")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+}
