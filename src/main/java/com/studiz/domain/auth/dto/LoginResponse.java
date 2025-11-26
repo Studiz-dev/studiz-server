@@ -42,4 +42,13 @@ public class LoginResponse {
                 .message("로그인 성공")
                 .build();
     }
+    
+    public static LoginResponse from(User user) {
+        return LoginResponse.builder()
+                .userId(user.getId())
+                .loginId(user.getLoginId())
+                .name(user.getName())
+                .message("로그인 성공")
+                .build();
+    }
 }

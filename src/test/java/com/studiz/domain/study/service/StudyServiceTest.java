@@ -44,14 +44,12 @@ class StudyServiceTest {
                 .loginId("owner1")
                 .password("password")
                 .name("Owner")
-                .email("owner@example.com")
                 .build());
         
         member = userRepository.save(User.builder()
                 .loginId("member1")
                 .password("password")
                 .name("Member")
-                .email("member@example.com")
                 .build());
     }
     
@@ -113,4 +111,3 @@ class StudyServiceTest {
         assertThat(previousOwner.getRole()).isEqualTo(StudyMemberRole.MEMBER);
     }
 }
-

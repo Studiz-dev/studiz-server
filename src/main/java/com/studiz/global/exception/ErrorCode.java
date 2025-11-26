@@ -25,6 +25,14 @@ public enum ErrorCode {
     STUDY_OWNER_CANNOT_BE_REMOVED(HttpStatus.BAD_REQUEST, "스터디장은 강퇴할 수 없습니다."),
     STUDY_MEMBER_ALREADY_OWNER(HttpStatus.BAD_REQUEST, "이미 스터디장 권한을 가진 멤버입니다."),
     
+    // Todo
+    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "할 일을 찾을 수 없습니다."),
+    TODO_PARTICIPANT_REQUIRED(HttpStatus.BAD_REQUEST, "할 일 참여자는 최소 한 명 이상이어야 합니다."),
+    TODO_INVALID_PARTICIPANT(HttpStatus.BAD_REQUEST, "스터디 멤버만 할 일에 참여할 수 있습니다."),
+    TODO_MEMBER_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 할 일의 참가자가 아닙니다."),
+    TODO_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "이미 완료된 할 일입니다."),
+    TODO_CERTIFICATION_REQUIRED(HttpStatus.BAD_REQUEST, "인증 내용이 필요합니다."),
+    
     // Common
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.");
     
