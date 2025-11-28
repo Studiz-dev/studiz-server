@@ -30,7 +30,8 @@ services:
           property: password
       - key: JWT_SECRET
         generateValue: true
-    healthCheckPath: /api/health
+    # Health check 비활성화 - Render가 자동으로 포트 8080을 확인
+    # healthCheckPath: /api/health
 
 databases:
   - name: studiz-postgres

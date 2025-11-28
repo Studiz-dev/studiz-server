@@ -44,12 +44,13 @@ public class DataSourceConfig {
         config.setPassword(dbPassword);
         config.setDriverClassName("org.postgresql.Driver");
         
-        // Connection pool 설정
+        // Connection pool 설정 (배포 안정성을 위해 조정)
         config.setMaximumPoolSize(10);
-        config.setMinimumIdle(5);
-        config.setConnectionTimeout(30000);
+        config.setMinimumIdle(2);
+        config.setConnectionTimeout(60000);  // 60초로 증가
         config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
+        config.setInitializationFailTimeout(-1);  // 연결 실패 시에도 계속 시도
         
         return new HikariDataSource(config);
     }
