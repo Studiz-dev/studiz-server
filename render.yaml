@@ -2,7 +2,7 @@ services:
   - type: web
     name: studiz-server
     runtime: docker
-    plan: starter
+    plan: free  # 무료 플랜
     dockerfilePath: ./Dockerfile
     dockerContext: .
     envVars:
@@ -40,6 +40,6 @@ databases:
   - name: studiz-postgres
     databaseName: studiz
     user: studiz
-    plan: starter
+    plan: free  # 무료 플랜
     postgresMajorVersion: 15
 
