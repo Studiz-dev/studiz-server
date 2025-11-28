@@ -32,11 +32,19 @@ public class ScheduleController {
     @PostMapping
     @Operation(
             summary = "일정 생성",
-            description = "스터디의 새로운 일정을 생성합니다. 스터디장만 생성할 수 있으며, 시작일-종료일 범위에서 30분 단위 시간 슬롯이 자동으로 생성됩니다."
+            description = "스터디의 새로운 일정을 생성합니다.\n\n" +
+                    "**권한**: 스터디장만 생성 가능\n\n" +
+                    "**동작 방식**:\n" +
+                    "- 시작일부터 종료일까지의 모든 날짜에 대해 30분 단위 시간 슬롯이 자동 생성됩니다.\n" +
+                    "- 예: 2024-01-15 ~ 2024-01-16이면, 각 날짜의 00:00부터 23:30까지 48개의 슬롯이 생성됩니다.\n" +
+                    "- 생성된 슬롯은 일정 상세 조회 API로 확인할 수 있습니다.\n\n" +
+                    "**주의사항**:\n" +
+                    "- 시작일은 종료일보다 이전이어야 합니다.\n" +
+                    "- 날짜 범위가 너무 크면 많은 슬롯이 생성되므로 주의하세요."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "일정 생성 성공"),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 날짜 범위"),
+            @ApiResponse(responseCode = "200", description = "일정 생성 성공", content = @Content(schema = @Schema(implementation = ScheduleResponse.class))),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 날짜 범위 (시작일이 종료일보다 늦음)"),
             @ApiResponse(responseCode = "403", description = "스터디장 권한 필요"),
             @ApiResponse(responseCode = "404", description = "스터디를 찾을 수 없음")
     })
@@ -52,10 +60,16 @@ public class ScheduleController {
     @GetMapping
     @Operation(
             summary = "스케줄 조회",
-            description = "스터디의 일정 목록을 조회합니다. month 파라미터로 특정 월의 일정만 필터링할 수 있습니다. (형식: YYYY-MM)"
+            description = "스터디의 일정 목록을 조회합니다.\n\n" +
+                    "**파라미터**:\n" +
+                    "- `month` (선택): 특정 월의 일정만 필터링. 형식: `YYYY-MM` (예: `2024-01`)\n" +
+                    "- `month`를 생략하면 모든 일정을 조회합니다.\n\n" +
+                    "**필터링 로직**:\n" +
+                    "- 일정의 시작일 또는 종료일이 해당 월에 포함되면 조회됩니다.\n" +
+                    "- 예: 일정이 2024-01-15 ~ 2024-01-20이면, `month=2024-01`로 조회 가능합니다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ScheduleResponse.class))),
             @ApiResponse(responseCode = "403", description = "스터디 멤버만 접근 가능"),
             @ApiResponse(responseCode = "404", description = "스터디를 찾을 수 없음")
     })
@@ -72,10 +86,18 @@ public class ScheduleController {
     @GetMapping("/{scheduleId}")
     @Operation(
             summary = "스케줄 상세 조회",
-            description = "특정 일정의 상세 정보를 조회합니다. 시간 슬롯 목록이 포함됩니다."
+            description = "특정 일정의 상세 정보를 조회합니다.\n\n" +
+                    "**응답 내용**:\n" +
+                    "- 일정 기본 정보 (제목, 시작일, 종료일)\n" +
+                    "- 확정된 시간 슬롯 ID (확정되지 않았으면 null)\n" +
+                    "- 모든 시간 슬롯 목록 (시작 시간 순으로 정렬)\n\n" +
+                    "**시간 슬롯**:\n" +
+                    "- 각 슬롯은 30분 단위입니다.\n" +
+                    "- `startTime`과 `endTime`으로 시간 범위를 확인할 수 있습니다.\n" +
+                    "- 이 슬롯 ID를 사용하여 가능 시간을 등록할 수 있습니다."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ScheduleDetailResponse.class))),
             @ApiResponse(responseCode = "403", description = "스터디 멤버만 접근 가능"),
             @ApiResponse(responseCode = "404", description = "일정을 찾을 수 없음")
     })
