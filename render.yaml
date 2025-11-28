@@ -31,10 +31,6 @@ services:
       - key: JWT_SECRET
         generateValue: true
 
-databases:
-  - name: studiz-postgres
-    databaseName: studiz
-    user: studiz
-    plan: free
-    postgresMajorVersion: 15
+# 기존 데이터베이스 사용 시 databases 섹션 제거
+# Blueprint 배포 전에 studiz-postgres 데이터베이스를 먼저 생성해야 합니다
 
