@@ -2,15 +2,33 @@
 
 ## 빠른 시작
 
-### 1. 환경 변수 설정
+### 1. 환경 변수 설정 (자동 생성) ⭐ 추천
+
+```bash
+# 환경 변수 자동 생성 스크립트 실행
+./setup-env.sh
+```
+
+이 스크립트가:
+- JWT Secret을 자동으로 생성합니다
+- 데이터베이스 비밀번호를 안전하게 입력받습니다
+- `.env.prod` 파일을 자동으로 생성합니다
+
+### 1-1. 환경 변수 수동 설정
+
+자동 스크립트를 사용하지 않는 경우:
 
 ```bash
 # .env.prod 파일 생성
 cat > .env.prod << EOF
-DB_PASSWORD=your-secure-password
-JWT_SECRET=your-very-long-jwt-secret-key-minimum-32-characters
+DB_PASSWORD=원하는-데이터베이스-비밀번호
+JWT_SECRET=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-32)
 EOF
 ```
+
+**비밀번호 생성 팁:**
+- **DB_PASSWORD**: 원하는 비밀번호를 직접 입력 (예: `MySecurePass123!`)
+- **JWT_SECRET**: 위 명령어가 자동으로 생성하거나, 최소 32자 이상의 랜덤 문자열 사용
 
 ### 2. 배포 실행
 
@@ -62,12 +80,34 @@ java -jar build/libs/studiz-server-0.0.1-SNAPSHOT.jar \
 
 ## 환경 변수
 
-필수 환경 변수:
+### 필수 환경 변수
 
-| 변수명 | 설명 | 예시 |
-|--------|------|------|
-| `DB_PASSWORD` | PostgreSQL 비밀번호 | `secure-password-123` |
-| `JWT_SECRET` | JWT 토큰 시크릿 키 (최소 32자) | `very-long-random-string-1234567890` |
+| 변수명 | 설명 | 생성 방법 |
+|--------|------|-----------|
+| `DB_PASSWORD` | PostgreSQL 비밀번호 | 직접 입력 (예: `MyPassword123!`) |
+| `JWT_SECRET` | JWT 토큰 시크릿 키 (최소 32자) | 자동 생성 또는 수동 입력 |
+
+### 비밀번호 생성 방법
+
+#### 방법 1: 자동 생성 (추천) ⭐
+```bash
+./setup-env.sh
+```
+
+#### 방법 2: 수동 생성
+
+**JWT Secret 생성:**
+```bash
+# macOS/Linux
+openssl rand -base64 32 | tr -d "=+/" | cut -c1-32
+
+# 또는
+openssl rand -hex 32
+```
+
+**DB Password:**
+- 원하는 비밀번호를 직접 입력하세요
+- 예: `MySecurePassword123!`, `studiz2024!pass`
 
 선택 환경 변수:
 
