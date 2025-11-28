@@ -4,6 +4,7 @@ import com.studiz.domain.auth.dto.LoginRequest;
 import com.studiz.domain.auth.dto.LoginResponse;
 import com.studiz.domain.auth.dto.RegisterRequest;
 import com.studiz.domain.auth.dto.RegisterResponse;
+import com.studiz.domain.user.dto.UserProfileResponse;
 import com.studiz.domain.user.entity.User;
 import com.studiz.domain.user.repository.UserRepository;
 import com.studiz.global.exception.DuplicateLoginIdException;
@@ -69,6 +70,18 @@ public class UserService {
 
         log.info("로그인 성공: userId={}, loginId={}", user.getId(), user.getLoginId());
         return LoginResponse.from(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileResponse getProfile(User user) {
+        return UserProfileResponse.from(user);
+    }
+
+    @Transactional
+    public UserProfileResponse updateProfile(User user, String name) {
+        user.updateName(name);
+        log.info("프로필 수정: userId={}, newName={}", user.getId(), name);
+        return UserProfileResponse.from(user);
     }
 }
 

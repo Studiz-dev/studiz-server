@@ -33,6 +33,14 @@ public enum ErrorCode {
     TODO_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "이미 완료된 할 일입니다."),
     TODO_CERTIFICATION_REQUIRED(HttpStatus.BAD_REQUEST, "인증 내용이 필요합니다."),
     
+    // Schedule
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다."),
+    SCHEDULE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "일정에 접근할 수 없습니다."),
+    SCHEDULE_INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "유효하지 않은 날짜 범위입니다."),
+    
+    // Notification
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
+    
     // Common
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.");
     

@@ -1,5 +1,7 @@
 package com.studiz.domain.studymember.service;
 
+import com.studiz.domain.notification.entity.NotificationType;
+import com.studiz.domain.notification.service.NotificationService;
 import com.studiz.domain.study.entity.Study;
 import com.studiz.domain.study.exception.StudyMemberAccessDeniedException;
 import com.studiz.domain.study.exception.StudyMemberAlreadyExistsException;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ import java.util.List;
 public class StudyMemberService {
 
     private final StudyMemberRepository studyMemberRepository;
+    private final NotificationService notificationService;
 
     public void joinStudy(Study study, User user) {
         if (studyMemberRepository.existsByStudyAndUser(study, user)) {
@@ -37,6 +41,15 @@ public class StudyMemberService {
                 .build();
 
         studyMemberRepository.save(member);
+
+        // 멤버 초대 알림 생성
+        notificationService.createNotification(
+                user,
+                NotificationType.MEMBER_INVITED,
+                "스터디에 초대되었습니다",
+                String.format("'%s' 스터디에 초대되었습니다.", study.getName()),
+                study.getId()
+        );
     }
 
     public void leaveStudy(Study study, User user) {

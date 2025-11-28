@@ -56,3 +56,14 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// JAR 빌드 설정
+jar {
+    enabled = false
+}
+
+// 실행 가능한 JAR 생성
+bootJar {
+    archiveBaseName = 'studiz-server'
+    archiveVersion = '0.0.1-SNAPSHOT'
+}
