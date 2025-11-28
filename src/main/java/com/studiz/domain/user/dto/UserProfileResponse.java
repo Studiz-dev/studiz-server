@@ -1,35 +1,29 @@
-package com.studiz.domain.auth.dto;
+package com.studiz.domain.user.dto;
 
 import com.studiz.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
-@Schema(description = "회원가입 응답")
-public class RegisterResponse {
+@Schema(description = "사용자 프로필 정보")
+public class UserProfileResponse {
 
     @Schema(description = "사용자 ID", example = "1")
-    private Long id;
+    private final Long id;
 
     @Schema(description = "로그인 ID", example = "user123")
-    private String loginId;
+    private final String loginId;
 
     @Schema(description = "이름", example = "홍길동")
-    private String name;
+    private final String name;
 
-    @Schema(description = "가입 일시", example = "2024-01-15T10:30:00")
-    private LocalDateTime createdAt;
-
-    public static RegisterResponse from(User user) {
-        return RegisterResponse.builder()
+    public static UserProfileResponse from(User user) {
+        return UserProfileResponse.builder()
                 .id(user.getId())
                 .loginId(user.getLoginId())
                 .name(user.getName())
-                .createdAt(user.getCreatedAt())
                 .build();
     }
 }

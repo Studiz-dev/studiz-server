@@ -1,5 +1,7 @@
 package com.studiz.domain.todo.service;
 
+import com.studiz.domain.notification.entity.NotificationType;
+import com.studiz.domain.notification.service.NotificationService;
 import com.studiz.domain.study.entity.Study;
 import com.studiz.domain.study.service.StudyService;
 import com.studiz.domain.studymember.repository.StudyMemberRepository;
@@ -37,6 +39,7 @@ public class TodoService {
     private final StudyMemberService studyMemberService;
     private final StudyMemberRepository studyMemberRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
     
     public TodoDetailResponse createTodo(UUID studyId, TodoCreateRequest request, User owner) {
         Study study = studyService.getStudy(studyId);
@@ -68,6 +71,18 @@ public class TodoService {
         });
         
         Todo saved = todoRepository.save(todo);
+        
+        // Todo 생성 알림을 참여자들에게 전송
+        participants.forEach(participant -> {
+            notificationService.createNotification(
+                    participant,
+                    NotificationType.TODO_CREATED,
+                    "새로운 할 일이 생성되었습니다",
+                    String.format("'%s' 스터디에 '%s' 할 일이 추가되었습니다.", study.getName(), saved.getName()),
+                    saved.getId()
+            );
+        });
+        
         return TodoDetailResponse.from(saved);
     }
     

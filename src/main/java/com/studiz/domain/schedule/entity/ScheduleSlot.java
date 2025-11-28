@@ -33,7 +33,7 @@ public class ScheduleSlot {
     private LocalDateTime endTime;
 
     public static ScheduleSlot create(Schedule schedule, LocalDateTime startTime) {
-        LocalDateTime endTime = startTime.plusMinutes(30);
+        LocalDateTime endTime = startTime.plusHours(1);
         
         return ScheduleSlot.builder()
                 .schedule(schedule)
