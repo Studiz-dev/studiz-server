@@ -1,0 +1,15 @@
+package com.studiz.domain.user.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+
+@Getter
+@Schema(description = "사용자 프로필 수정 요청")
+public class UserProfileUpdateRequest {
+
+    @NotBlank(message = "이름은 필수입니다.")
+    @Schema(description = "변경할 이름", example = "홍길동", required = true)
+    private String name;
+}
+
