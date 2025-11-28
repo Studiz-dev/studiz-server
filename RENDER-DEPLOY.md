@@ -18,13 +18,23 @@ git commit -m "Render 배포 준비"
 git push origin main
 ```
 
-#### 2. Render에서 Blueprint 생성
+#### 2. Render GitHub App 설치 (처음만)
+
+Render에서 GitHub 저장소에 접근하려면 GitHub App을 설치해야 합니다:
 
 1. [Render 대시보드](https://dashboard.render.com) 접속
 2. **New +** → **Blueprint** 클릭
-3. GitHub 저장소 선택 및 연결
-4. `render.yaml` 파일이 자동으로 감지됨
-5. **Apply** 클릭
+3. **"Install Render"** 또는 **"Connect GitHub"** 버튼 클릭
+4. GitHub 로그인 및 권한 승인
+5. 저장소 선택 (또는 전체 조직 선택)
+6. **Install** 또는 **Approve** 클릭
+
+#### 3. Render에서 Blueprint 생성
+
+1. **New +** → **Blueprint** 클릭 (또는 다시 시도)
+2. GitHub 저장소 선택
+3. `render.yaml` 파일이 자동으로 감지됨
+4. **Apply** 클릭
 
 #### 3. 완료!
 
