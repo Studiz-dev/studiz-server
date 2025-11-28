@@ -36,7 +36,6 @@ public class SecurityConfig {
                         // 인증 없이 접근 가능한 public API
                         // context-path(/api)를 포함한 전체 경로로 매칭
                         .requestMatchers(
-                                "/api/health",               // Health check
                                 "/api/auth/**",              // 로그인/회원가입
                                 "/api/swagger-ui.html",      // Swagger UI
                                 "/api/swagger-ui/**",        // Swagger UI 리소스
