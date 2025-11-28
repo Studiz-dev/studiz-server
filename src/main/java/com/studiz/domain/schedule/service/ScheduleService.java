@@ -1,5 +1,7 @@
 package com.studiz.domain.schedule.service;
 
+import com.studiz.domain.notification.entity.NotificationType;
+import com.studiz.domain.notification.service.NotificationService;
 import com.studiz.domain.schedule.dto.ScheduleCreateRequest;
 import com.studiz.domain.schedule.dto.ScheduleDetailResponse;
 import com.studiz.domain.schedule.dto.ScheduleResponse;
@@ -11,6 +13,7 @@ import com.studiz.domain.schedule.repository.ScheduleRepository;
 import com.studiz.domain.schedule.repository.ScheduleSlotRepository;
 import com.studiz.domain.study.entity.Study;
 import com.studiz.domain.study.service.StudyService;
+import com.studiz.domain.studymember.entity.StudyMember;
 import com.studiz.domain.studymember.service.StudyMemberService;
 import com.studiz.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,7 @@ public class ScheduleService {
     private final ScheduleSlotRepository scheduleSlotRepository;
     private final StudyService studyService;
     private final StudyMemberService studyMemberService;
+    private final NotificationService notificationService;
 
     public ScheduleResponse createSchedule(UUID studyId, ScheduleCreateRequest request, User user) {
         Study study = studyService.getStudy(studyId);
@@ -116,6 +120,18 @@ public class ScheduleService {
         }
 
         schedule.confirmSlot(slot);
+
+        // 스케줄 확정 알림을 스터디 멤버들에게 전송
+        List<StudyMember> members = studyMemberService.getMembers(study);
+        members.forEach(member -> {
+            notificationService.createNotification(
+                    member.getUser(),
+                    NotificationType.SCHEDULE_CONFIRMED,
+                    "일정이 확정되었습니다",
+                    String.format("'%s' 스터디의 '%s' 일정이 확정되었습니다.", study.getName(), schedule.getTitle()),
+                    schedule.getId()
+            );
+        });
     }
 
     private List<ScheduleSlot> generateTimeSlots(Schedule schedule, LocalDate startDate, LocalDate endDate) {
