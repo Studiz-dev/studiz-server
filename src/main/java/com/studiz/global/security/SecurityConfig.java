@@ -36,7 +36,9 @@ public class SecurityConfig {
                         // 인증 없이 접근 가능한 public API
                         // context-path(/api)를 포함한 전체 경로로 매칭
                         .requestMatchers(
+                                "/",                         // 루트 경로 (context-path 적용 후)
                                 "/api/",                     // 루트 경로
+                                "/api",                      // 루트 경로 (슬래시 없음)
                                 "/api/auth/**",              // 로그인/회원가입
                                 "/api/swagger-ui.html",      // Swagger UI
                                 "/api/swagger-ui/**",        // Swagger UI 리소스
@@ -51,7 +53,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // JWT 필터 등록 (세션 인증 전에 작동해야 함)
+                // JWT 필터 등록 (인증이 필요한 경로에만 적용)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

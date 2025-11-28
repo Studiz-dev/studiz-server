@@ -35,6 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+        
+        // Public 경로는 JWT 필터를 건너뜀
+        if (isPublicPath(path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             String token = resolveToken(request);
 
@@ -56,6 +64,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isPublicPath(String path) {
+        return path.equals("/") ||
+               path.equals("/api") ||
+               path.equals("/api/") ||
+               path.startsWith("/api/auth/") ||
+               path.startsWith("/api/swagger-ui") ||
+               path.startsWith("/api/api-docs") ||
+               path.startsWith("/api/v3/api-docs");
     }
 
     private String resolveToken(HttpServletRequest request) {
