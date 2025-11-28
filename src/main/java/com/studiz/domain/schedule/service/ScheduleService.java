@@ -54,7 +54,7 @@ public class ScheduleService {
 
         Schedule saved = scheduleRepository.save(schedule);
 
-        // 30분 단위 시간 슬롯 생성
+        // 1시간 단위 시간 슬롯 생성
         List<ScheduleSlot> slots = generateTimeSlots(saved, request.getStartDate(), request.getEndDate());
         scheduleSlotRepository.saveAll(slots);
 
@@ -138,7 +138,7 @@ public class ScheduleService {
         List<ScheduleSlot> slots = new java.util.ArrayList<>();
         LocalDate currentDate = startDate;
         LocalTime startTime = LocalTime.of(0, 0);
-        LocalTime endTime = LocalTime.of(23, 30);
+        LocalTime endTime = LocalTime.of(23, 0);
 
         while (!currentDate.isAfter(endDate)) {
             LocalDateTime slotStart = LocalDateTime.of(currentDate, startTime);
@@ -146,7 +146,7 @@ public class ScheduleService {
 
             while (!slotStart.isAfter(dayEnd)) {
                 slots.add(ScheduleSlot.create(schedule, slotStart));
-                slotStart = slotStart.plusMinutes(30);
+                slotStart = slotStart.plusHours(1);
             }
 
             currentDate = currentDate.plusDays(1);
