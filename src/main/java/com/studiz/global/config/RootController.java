@@ -10,9 +10,9 @@ import java.util.Map;
 
 /**
  * 루트 경로 컨트롤러
+ * context-path가 /api로 설정되어 있으므로 @RequestMapping은 필요 없음
  */
 @RestController
-@RequestMapping("/api")
 public class RootController {
 
     @GetMapping("/")
