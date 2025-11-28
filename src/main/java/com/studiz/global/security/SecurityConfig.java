@@ -35,10 +35,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 public API
                         .requestMatchers(
-                                "/auth/**",      // 로그인/회원가입
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/api-docs/**"
+                                "/api/auth/**",           // 로그인/회원가입
+                                "/api/swagger-ui.html",   // Swagger UI
+                                "/api/swagger-ui/**",     // Swagger UI 리소스
+                                "/api/api-docs/**",       // API Docs
+                                "/api/v3/api-docs/**"     // OpenAPI 3.0 Docs
                         ).permitAll()
 
                         // OPTIONS(프리플라이트 요청) 허용
