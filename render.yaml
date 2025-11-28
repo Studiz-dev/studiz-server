@@ -30,7 +30,7 @@ services:
           property: password
       - key: JWT_SECRET
         generateValue: true
-    healthCheckPath: /api/api-docs
+    healthCheckPath: /api/health
 
 databases:
   - name: studiz-postgres
