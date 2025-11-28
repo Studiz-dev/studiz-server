@@ -64,12 +64,32 @@ server:
   port: ${PORT:8080}
 ```
 
-### 6. 배포 확인
+### 6. 도메인 생성 및 확인
+
+**도메인 생성 방법:**
+
+1. 프로젝트 페이지에서 배포된 서비스(웹 서비스)를 클릭
+2. **Settings** 탭 클릭
+3. **Generate Domain** 버튼 클릭
+4. 자동으로 생성된 도메인 확인 (예: `studiz-server.up.railway.app`)
+
+**또는:**
+
+1. 프로젝트 페이지에서 배포된 서비스 카드를 클릭
+2. 상단에 **Public Domain** 섹션이 보이면 클릭
+3. **Generate Domain** 클릭
+
+**도메인 확인 위치:**
+
+- 프로젝트 페이지의 서비스 카드 상단
+- 서비스 페이지의 **Settings** 탭
+- 서비스 페이지 상단의 **Public Domain** 섹션
+
+### 7. 배포 확인
 
 1. **Deployments** 탭에서 배포 상태 확인
-2. 배포 완료 후 **Settings** → **Generate Domain** 클릭
-3. 제공된 URL로 접속 (예: `https://studiz-server.up.railway.app`)
-4. Swagger UI: `https://studiz-server.up.railway.app/api/swagger-ui.html`
+2. 생성된 도메인으로 접속 (예: `https://studiz-server.up.railway.app`)
+3. Swagger UI: `https://studiz-server.up.railway.app/api/swagger-ui.html`
 
 ## Railway vs Render
 
