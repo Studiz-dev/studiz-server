@@ -5,7 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-@Schema(description = "사용자 프로필 수정 요청")
+@Schema(
+        description = "사용자 프로필 수정 요청",
+        example = "{\n" +
+                "  \"name\": \"홍길동\"\n" +
+                "}"
+)
 public class UserProfileUpdateRequest {
 
     @NotBlank(message = "이름은 필수입니다.")

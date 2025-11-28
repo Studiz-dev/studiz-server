@@ -8,7 +8,14 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-@Schema(description = "일정 생성 요청")
+@Schema(
+        description = "일정 생성 요청",
+        example = "{\n" +
+                "  \"title\": \"스터디 모임 일정 조율\",\n" +
+                "  \"startDate\": \"2024-01-15\",\n" +
+                "  \"endDate\": \"2024-01-20\"\n" +
+                "}"
+)
 public class ScheduleCreateRequest {
 
     @NotBlank(message = "제목은 필수입니다.")

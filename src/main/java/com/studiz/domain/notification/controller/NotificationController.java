@@ -31,10 +31,28 @@ public class NotificationController {
             summary = "알림 목록 조회",
             description = "사용자의 모든 알림 목록을 조회합니다. 최신순으로 정렬됩니다.\n\n" +
                     "**알림 타입**:\n" +
-                    "- `MEMBER_INVITED`: 멤버 초대됨\n" +
-                    "- `TODO_CREATED`: Todo 생성됨\n" +
-                    "- `TODO_DUE_SOON`: 마감 하루 전 알림\n" +
-                    "- `SCHEDULE_CONFIRMED`: 스케줄 확정됨"
+                    "- `MEMBER_INVITED`: 멤버 초대됨 (스터디에 가입했을 때)\n" +
+                    "- `TODO_CREATED`: Todo 생성됨 (할 일에 참여자로 지정되었을 때)\n" +
+                    "- `TODO_DUE_SOON`: 마감 하루 전 알림 (향후 구현 예정)\n" +
+                    "- `SCHEDULE_CONFIRMED`: 스케줄 확정됨 (일정이 확정되었을 때)\n\n" +
+                    "**응답 예시**:\n" +
+                    "```json\n" +
+                    "[\n" +
+                    "  {\n" +
+                    "    \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\n" +
+                    "    \"type\": \"TODO_CREATED\",\n" +
+                    "    \"title\": \"새로운 할 일이 생성되었습니다\",\n" +
+                    "    \"content\": \"스터디 'Java 기초'에 새로운 할 일이 추가되었습니다.\",\n" +
+                    "    \"read\": false,\n" +
+                    "    \"relatedId\": \"123e4567-e89b-12d3-a456-426614174001\",\n" +
+                    "    \"createdAt\": \"2024-01-15T10:30:00\"\n" +
+                    "  }\n" +
+                    "]\n" +
+                    "```\n\n" +
+                    "**사용 시나리오**:\n" +
+                    "1. 앱 시작 시 이 API를 호출하여 알림 목록을 가져옵니다.\n" +
+                    "2. `read: false`인 알림은 읽지 않은 알림으로 표시합니다.\n" +
+                    "3. `relatedId`를 사용하여 알림 클릭 시 해당 엔티티로 이동합니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = NotificationResponse.class))),

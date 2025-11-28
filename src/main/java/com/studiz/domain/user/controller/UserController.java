@@ -49,8 +49,15 @@ public class UserController {
             description = "현재 로그인한 사용자의 이름을 수정합니다.\n\n" +
                     "**수정 가능한 항목**:\n" +
                     "- 이름 (name)\n\n" +
+                    "**요청 예시**:\n" +
+                    "```json\n" +
+                    "{\n" +
+                    "  \"name\": \"홍길동\"\n" +
+                    "}\n" +
+                    "```\n\n" +
                     "**주의사항**:\n" +
-                    "- 로그인 ID는 변경할 수 없습니다."
+                    "- 로그인 ID는 변경할 수 없습니다.\n" +
+                    "- 이름은 필수이며, 빈 문자열일 수 없습니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(schema = @Schema(implementation = UserProfileResponse.class))),
