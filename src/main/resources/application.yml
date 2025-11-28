@@ -3,7 +3,9 @@ spring:
     name: studiz-server
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/studiz
+    # Render에서 제공하는 connectionString은 postgresql:// 형식이므로 사용하지 않음
+    # 항상 개별 필드로 jdbc:postgresql:// 형식으로 구성
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:studiz}
     username: ${DB_USERNAME:studiz}
     password: ${DB_PASSWORD:studiz}
     driver-class-name: org.postgresql.Driver
