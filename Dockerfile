@@ -1,5 +1,5 @@
 # Build stage
-FROM gradle:8.5-jdk17-alpine AS build
+FROM gradle:8.5-jdk17 AS build
 WORKDIR /app
 
 # Copy Gradle files
@@ -13,11 +13,11 @@ COPY src ./src
 RUN gradle clean build -x test --no-daemon
 
 # Runtime stage
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 # Create non-root user
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
 # Copy JAR from build stage
@@ -27,8 +27,8 @@ COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/swagger-ui.html || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/api/swagger-ui.html || exit 1
 
 # Run application
 ENTRYPOINT ["java", "-jar", "app.jar"]
