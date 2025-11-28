@@ -34,14 +34,13 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 public API
-                        // 주의: context-path(/api)는 Spring Security에서 자동으로 제거되므로
-                        // 실제 URL이 /api/swagger-ui.html이어도 여기서는 /swagger-ui.html로 매칭해야 함
+                        // context-path(/api)를 포함한 전체 경로로 매칭
                         .requestMatchers(
-                                "/auth/**",           // 실제: /api/auth/**
-                                "/swagger-ui.html",   // 실제: /api/swagger-ui.html
-                                "/swagger-ui/**",     // 실제: /api/swagger-ui/**
-                                "/api-docs/**",       // 실제: /api/api-docs/**
-                                "/v3/api-docs/**"     // 실제: /api/v3/api-docs/**
+                                "/api/auth/**",              // 로그인/회원가입
+                                "/api/swagger-ui.html",      // Swagger UI
+                                "/api/swagger-ui/**",        // Swagger UI 리소스
+                                "/api/api-docs/**",          // API 문서
+                                "/api/v3/api-docs/**"        // OpenAPI 3.0 문서
                         ).permitAll()
 
                         // OPTIONS(프리플라이트 요청) 허용
