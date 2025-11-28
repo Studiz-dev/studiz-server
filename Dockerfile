@@ -16,6 +16,9 @@ RUN gradle clean build -x test --no-daemon
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
+# Install curl for health check
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Create non-root user
 RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
@@ -26,8 +29,8 @@ COPY --from=build /app/build/libs/*.jar app.jar
 # Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+# Health check (start-period를 120초로 늘려서 애플리케이션 시작 시간 확보)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
   CMD curl -f http://localhost:8080/api/api-docs || exit 1
 
 # Run application
