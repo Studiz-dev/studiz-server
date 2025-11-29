@@ -38,5 +38,8 @@ public class RegisterRequest {
     @Size(min = 2, max = 50, message = "이름은 2~50자 사이여야 합니다.")
     @Schema(description = "이름 (2-50자)", example = "홍길동", required = true)
     private String name;
+
+    @Schema(description = "프로필 이미지 URL (선택사항)", example = "https://example.com/profile.jpg", required = false)
+    private String profileImageUrl;
 }
 

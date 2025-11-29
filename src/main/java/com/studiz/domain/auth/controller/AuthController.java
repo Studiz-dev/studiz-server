@@ -41,7 +41,8 @@ public class AuthController {
                     "{\n" +
                     "  \"loginId\": \"user123\",\n" +
                     "  \"password\": \"Password123!\",\n" +
-                    "  \"name\": \"홍길동\"\n" +
+                    "  \"name\": \"홍길동\",\n" +
+                    "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
                     "}\n" +
                     "```\n\n" +
                     "**유효성 검사**:\n" +

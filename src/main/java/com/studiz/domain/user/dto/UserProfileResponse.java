@@ -19,12 +19,17 @@ public class UserProfileResponse {
     @Schema(description = "이름", example = "홍길동")
     private final String name;
 
+    @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.jpg", nullable = true)
+    private final String profileImageUrl;
+
     public static UserProfileResponse from(User user) {
         return UserProfileResponse.builder()
                 .id(user.getId())
                 .loginId(user.getLoginId())
                 .name(user.getName())
+                .profileImageUrl(user.getProfileImageUrl())
                 .build();
     }
 }
+
 

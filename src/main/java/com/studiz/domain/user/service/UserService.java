@@ -43,6 +43,7 @@ public class UserService {
                 .loginId(request.getLoginId())
                 .password(encodedPassword)
                 .name(request.getName())
+                .profileImageUrl(request.getProfileImageUrl())
                 .build();
 
         User savedUser = userRepository.save(user);
