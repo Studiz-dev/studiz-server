@@ -42,8 +42,13 @@ public class SecurityConfig {
                                 "/api/auth/**",              // 로그인/회원가입
                                 "/api/swagger-ui.html",      // Swagger UI
                                 "/api/swagger-ui/**",        // Swagger UI 리소스
+                                "/api/swagger-ui/index.html", // Swagger UI 인덱스
                                 "/api/api-docs/**",          // API 문서
-                                "/api/v3/api-docs/**"        // OpenAPI 3.0 문서
+                                "/api/v3/api-docs/**",       // OpenAPI 3.0 문서
+                                "/swagger-ui/**",            // Swagger UI 정적 리소스 (context-path 없이)
+                                "/swagger-ui.html",          // Swagger UI (context-path 없이)
+                                "/api-docs/**",              // API 문서 (context-path 없이)
+                                "/v3/api-docs/**"            // OpenAPI 3.0 문서 (context-path 없이)
                         ).permitAll()
 
                         // OPTIONS(프리플라이트 요청) 허용

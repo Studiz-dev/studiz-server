@@ -180,7 +180,7 @@ sudo systemctl restart postgresql
 로컬에서:
 ```bash
 # .pem 파일이 ~/.ssh/에 있는 경우
-scp -i ~/.ssh/studiz-server-key.pem build/libs/studiz-server-0.0.1-SNAPSHOT.jar ec2-user@<EC2-PUBLIC-IP>:/home/ec2-user/
+scp -i ~/.ssh/studiz-server-key.pem build/libs/studiz-server-0.0.1-SNAPSHOT.jar ec2-user@<3.27.86.20>:/home/ec2-user/
 
 # 또는 SSH Config를 설정한 경우
 scp build/libs/studiz-server-0.0.1-SNAPSHOT.jar studiz-ec2:/home/ec2-user/
@@ -237,8 +237,8 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=studiz
 DB_USERNAME=studiz
-DB_PASSWORD=your-secure-password
-JWT_SECRET=your-very-long-jwt-secret-key-minimum-32-characters-long
+DB_PASSWORD=studizpassword!
+JWT_SECRET=BlAgOygJ6Suh6Hv6DlZ6dgiTLGUs1uu
 ```
 
 ### 8. Systemd 서비스 생성
