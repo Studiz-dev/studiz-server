@@ -44,3 +44,8 @@ application-prod.yml
 .env.*
 !.env.example
 
+### AWS Keys ###
+*.pem
+*.ppk
+aws-keys/
+

@@ -45,6 +45,21 @@ AWS EC2 Free Tier를 사용하여 Spring Boot 애플리케이션을 배포하는
    - **Create key pair** 클릭
    - ⚠️ **중요**: 다운로드한 `.pem` 파일을 안전하게 보관!
 
+   **.pem 파일 저장 위치 (권장):**
+   ```bash
+   # 홈 디렉토리의 .ssh 폴더에 저장 (권장)
+   mkdir -p ~/.ssh
+   mv ~/Downloads/studiz-server-key.pem ~/.ssh/
+   chmod 400 ~/.ssh/studiz-server-key.pem
+   
+   # 또는 프로젝트 외부의 별도 폴더
+   mkdir -p ~/aws-keys
+   mv ~/Downloads/studiz-server-key.pem ~/aws-keys/
+   chmod 400 ~/aws-keys/studiz-server-key.pem
+   ```
+   
+   ⚠️ **절대 프로젝트 디렉토리 안에 두지 마세요!** (Git에 실수로 커밋될 수 있음)
+
 6. **네트워크 설정**
    - **Security group**: 새로 생성
    - **Security group name**: `studiz-server-sg`
@@ -61,14 +76,35 @@ AWS EC2 Free Tier를 사용하여 Spring Boot 애플리케이션을 배포하는
 
 **Mac/Linux:**
 ```bash
-# 키 파일 권한 설정
-chmod 400 studiz-server-key.pem
+# 키 파일 권한 설정 (처음 한 번만)
+chmod 400 ~/.ssh/studiz-server-key.pem
+# 또는
+chmod 400 ~/aws-keys/studiz-server-key.pem
 
 # SSH 접속 (Amazon Linux)
-ssh -i studiz-server-key.pem ec2-user@<EC2-PUBLIC-IP>
+ssh -i ~/.ssh/studiz-server-key.pem ec2-user@<EC2-PUBLIC-IP>
 
 # SSH 접속 (Ubuntu)
-ssh -i studiz-server-key.pem ubuntu@<EC2-PUBLIC-IP>
+ssh -i ~/.ssh/studiz-server-key.pem ubuntu@<EC2-PUBLIC-IP>
+```
+
+**SSH Config 설정 (선택사항, 더 편하게 사용):**
+```bash
+# ~/.ssh/config 파일 생성 또는 수정
+vi ~/.ssh/config
+```
+
+다음 내용 추가:
+```
+Host studiz-ec2
+    HostName <EC2-PUBLIC-IP>
+    User ec2-user
+    IdentityFile ~/.ssh/studiz-server-key.pem
+```
+
+이제 간단하게 접속 가능:
+```bash
+ssh studiz-ec2
 ```
 
 **Windows (PowerShell):**
@@ -137,7 +173,11 @@ sudo systemctl restart postgresql
 
 로컬에서:
 ```bash
-scp -i studiz-server-key.pem build/libs/studiz-server-0.0.1-SNAPSHOT.jar ec2-user@<EC2-PUBLIC-IP>:/home/ec2-user/
+# .pem 파일이 ~/.ssh/에 있는 경우
+scp -i ~/.ssh/studiz-server-key.pem build/libs/studiz-server-0.0.1-SNAPSHOT.jar ec2-user@<EC2-PUBLIC-IP>:/home/ec2-user/
+
+# 또는 SSH Config를 설정한 경우
+scp build/libs/studiz-server-0.0.1-SNAPSHOT.jar studiz-ec2:/home/ec2-user/
 ```
 
 **방법 2: Git으로 클론 후 빌드**
@@ -416,7 +456,10 @@ ExecStart=/usr/bin/java -Xmx512m -Xms256m -jar /opt/studiz-server/app.jar
 
 ```bash
 # 새 버전 빌드 후 로컬에서
-scp -i studiz-server-key.pem build/libs/studiz-server-0.0.1-SNAPSHOT.jar ec2-user@<EC2-PUBLIC-IP>:/opt/studiz-server/app.jar
+scp -i ~/.ssh/studiz-server-key.pem build/libs/studiz-server-0.0.1-SNAPSHOT.jar ec2-user@<EC2-PUBLIC-IP>:/opt/studiz-server/app.jar
+
+# 또는 SSH Config를 설정한 경우
+scp build/libs/studiz-server-0.0.1-SNAPSHOT.jar studiz-ec2:/opt/studiz-server/app.jar
 
 # EC2에서
 sudo systemctl restart studiz-server
