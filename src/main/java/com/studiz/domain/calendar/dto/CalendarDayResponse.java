@@ -1,12 +1,12 @@
 package com.studiz.domain.calendar.dto;
 
-import com.studiz.domain.todo.dto.TodoResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -16,13 +16,28 @@ public class CalendarDayResponse {
     @Schema(description = "조회한 날짜", example = "2024-01-15")
     private final LocalDate date;
 
-    @Schema(description = "해당 날짜에 마감인 Todo 목록")
-    private final List<TodoResponse> todos;
+    @Schema(description = "해당 날짜에 확정된 일정 목록 (시간 순으로 정렬됨, 프론트에서 최대 3개만 표시)", 
+            example = "[]")
+    private final List<ScheduleInfo> schedules;
 
-    @Schema(description = "전체 완료율 (0-100). 해당 날짜의 모든 Todo의 완료율 평균", example = "80.5")
-    private final double overallCompletionRate;
+    @Getter
+    @Builder
+    @Schema(description = "일정 정보")
+    public static class ScheduleInfo {
+        @Schema(description = "일정 ID", example = "123e4567-e89b-12d3-a456-426614174000")
+        private final UUID id;
 
-    @Schema(description = "D-day (마감일까지 남은 일수). 음수면 지난 날짜, 0이면 오늘, 양수면 남은 일수", example = "5")
-    private final Long dDay;
+        @Schema(description = "일정 제목", example = "스터디 모임")
+        private final String title;
+
+        @Schema(description = "장소", example = "서울시 강남구", nullable = true)
+        private final String location;
+
+        @Schema(description = "일정 시간 (YYYY M DD HH:mm 형식)", example = "2024 1 15 14:00")
+        private final String scheduleTime;
+
+        @Schema(description = "D-Day (오늘 기준 남은 일수)", example = "5")
+        private final Long dDay;
+    }
 }
 
