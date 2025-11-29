@@ -43,9 +43,14 @@ public class ScheduleController {
                     "```json\n" +
                     "{\n" +
                     "  \"title\": \"스터디 모임 일정 조율\",\n" +
-                    "  \"startDate\": \"2024-01-15\"\n" +
+                    "  \"startDate\": \"2024-01-15\",\n" +
+                    "  \"location\": \"서울시 강남구\"\n" +
                     "}\n" +
-                    "```"
+                    "```\n\n" +
+                    "**요청 필드**:\n" +
+                    "- `title`: 일정 제목 (필수)\n" +
+                    "- `startDate`: 일정 날짜 (필수)\n" +
+                    "- `location`: 장소 (선택사항)"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "일정 생성 성공", content = @Content(schema = @Schema(implementation = ScheduleResponse.class))),

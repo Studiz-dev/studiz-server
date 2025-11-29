@@ -44,7 +44,7 @@ public class Schedule extends BaseEntity {
     @JoinColumn(name = "confirmed_slot_id")
     private ScheduleSlot confirmedSlot;
 
-    public static Schedule create(Study study, String title, LocalDate startDate, LocalDate endDate) {
+    public static Schedule create(Study study, String title, String location, LocalDate startDate, LocalDate endDate) {
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("시작일은 종료일보다 이전이어야 합니다.");
         }
@@ -52,7 +52,7 @@ public class Schedule extends BaseEntity {
         return Schedule.builder()
                 .study(study)
                 .title(title)
-                .location(null)
+                .location(location)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();

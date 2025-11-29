@@ -46,6 +46,7 @@ public class ScheduleService {
         Schedule schedule = Schedule.create(
                 study,
                 request.getTitle(),
+                request.getLocation(),
                 scheduleDate,
                 scheduleDate
         );
