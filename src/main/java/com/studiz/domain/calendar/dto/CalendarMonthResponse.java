@@ -23,13 +23,16 @@ public class CalendarMonthResponse {
 
     @Getter
     @Builder
-    @Schema(description = "하루 요약 정보")
+    @Schema(description = "하루 요약 정보 (달력에 표시할 일정 제목 최대 3개 포함)")
     public static class DaySummary {
         @Schema(description = "날짜", example = "2024-01-15")
         private final LocalDate date;
 
-        @Schema(description = "해당 날짜에 확정된 일정 개수", example = "2")
-        private final int scheduleCount;
+        @Schema(
+                description = "해당 날짜에 확정된 일정 제목 목록 (시간 오름차순, 최대 3개)",
+                example = "[\"시프 과제\", \"개강\", \"진단\"]"
+        )
+        private final List<String> scheduleTitles;
     }
 }
 

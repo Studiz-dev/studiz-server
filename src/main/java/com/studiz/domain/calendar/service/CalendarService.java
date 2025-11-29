@@ -51,13 +51,16 @@ public class CalendarService {
 
         for (LocalDate date = firstDay; !date.isAfter(lastDay); date = date.plusDays(1)) {
             LocalDate finalDate = date;
-            long scheduleCount = confirmedSchedules.stream()
+            List<String> scheduleTitles = confirmedSchedules.stream()
                     .filter(schedule -> schedule.getConfirmedSlot().getStartTime().toLocalDate().equals(finalDate))
-                    .count();
+                    .sorted((s1, s2) -> s1.getConfirmedSlot().getStartTime().compareTo(s2.getConfirmedSlot().getStartTime()))
+                    .map(Schedule::getTitle)
+                    .limit(3)
+                    .collect(Collectors.toList());
 
             daySummaries.add(CalendarMonthResponse.DaySummary.builder()
                     .date(date)
-                    .scheduleCount((int) scheduleCount)
+                    .scheduleTitles(scheduleTitles)
                     .build());
         }
 

@@ -39,7 +39,7 @@ public class CalendarController {
                     "- `days`: 해당 월의 각 날짜별 요약 정보 (배열)\n\n" +
                     "**각 날짜별 정보**:\n" +
                     "- `date`: 날짜 (YYYY-MM-DD)\n" +
-                    "- `scheduleCount`: 해당 날짜에 확정된 일정 개수\n\n" +
+                    "- `scheduleTitles`: 해당 날짜에 확정된 일정 제목 목록 (시간 오름차순, 최대 3개)\n\n" +
                     "**응답 예시**:\n" +
                     "```json\n" +
                     "{\n" +
@@ -48,14 +48,14 @@ public class CalendarController {
                     "  \"days\": [\n" +
                     "    {\n" +
                     "      \"date\": \"2024-01-15\",\n" +
-                    "      \"scheduleCount\": 2\n" +
+                    "      \"scheduleTitles\": [\"시프 과제\", \"개강\"]\n" +
                     "    }\n" +
                     "  ]\n" +
                     "}\n" +
                     "```\n\n" +
                     "**사용 예시**:\n" +
-                    "- 달력 UI에서 각 날짜에 일정이 있는지 표시\n" +
-                    "- 일정이 있는 날짜는 특별한 표시 (예: 점 표시)"
+                    "- 달력 UI에서 각 날짜 칸에 최대 3개의 일정 제목을 표시\n" +
+                    "- 일정이 3개를 초과하는 경우, 프론트에서 `+N` 등으로 추가 표시 처리"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = CalendarMonthResponse.class))),
