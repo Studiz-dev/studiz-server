@@ -28,14 +28,8 @@ public class CalendarMonthResponse {
         @Schema(description = "날짜", example = "2024-01-15")
         private final LocalDate date;
 
-        @Schema(description = "완료율 (0-100). 완료된 TodoMember 수 / 전체 TodoMember 수 * 100", example = "75.5")
-        private final double completionRate;
-
-        @Schema(description = "D-day (마감일까지 남은 일수). 음수면 지난 날짜, 0이면 오늘, 양수면 남은 일수", example = "5")
-        private final Long dDay;
-
-        @Schema(description = "해당 날짜에 마감인 Todo 개수", example = "3")
-        private final int todoCount;
+        @Schema(description = "해당 날짜에 확정된 일정 개수", example = "2")
+        private final int scheduleCount;
     }
 }
 

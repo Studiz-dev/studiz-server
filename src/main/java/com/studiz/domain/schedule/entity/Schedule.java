@@ -31,6 +31,9 @@ public class Schedule extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
+    @Column(length = 200)
+    private String location;
+
     @Column(nullable = false)
     private LocalDate startDate;
 
@@ -49,6 +52,7 @@ public class Schedule extends BaseEntity {
         return Schedule.builder()
                 .study(study)
                 .title(title)
+                .location(null)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
@@ -61,4 +65,5 @@ public class Schedule extends BaseEntity {
         this.confirmedSlot = slot;
     }
 }
+
 

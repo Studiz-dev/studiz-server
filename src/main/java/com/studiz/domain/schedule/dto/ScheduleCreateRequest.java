@@ -12,8 +12,7 @@ import java.time.LocalDate;
         description = "일정 생성 요청",
         example = "{\n" +
                 "  \"title\": \"스터디 모임 일정 조율\",\n" +
-                "  \"startDate\": \"2024-01-15\",\n" +
-                "  \"endDate\": \"2024-01-20\"\n" +
+                "  \"startDate\": \"2024-01-15\"\n" +
                 "}"
 )
 public class ScheduleCreateRequest {
@@ -23,11 +22,7 @@ public class ScheduleCreateRequest {
     private String title;
 
     @NotNull(message = "시작일은 필수입니다.")
-    @Schema(description = "일정 시작일 (YYYY-MM-DD 형식)", example = "2024-01-15", required = true)
+    @Schema(description = "일정 날짜 (YYYY-MM-DD 형식)", example = "2024-01-15", required = true)
     private LocalDate startDate;
-
-    @NotNull(message = "종료일은 필수입니다.")
-    @Schema(description = "일정 종료일 (YYYY-MM-DD 형식). 시작일보다 이후여야 합니다.", example = "2024-01-20", required = true)
-    private LocalDate endDate;
 }
 

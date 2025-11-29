@@ -26,11 +26,15 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String name;
 
+    @Column(length = 500)
+    private String profileImageUrl;
+
     @Builder
-    public User(String loginId, String password, String name) {
+    public User(String loginId, String password, String name, String profileImageUrl) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
+        this.profileImageUrl = profileImageUrl;
     }
 
     public void updateName(String name) {
