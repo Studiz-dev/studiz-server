@@ -60,6 +60,12 @@ AWS EC2 Free Tier를 사용하여 Spring Boot 애플리케이션을 배포하는
    
    ⚠️ **절대 프로젝트 디렉토리 안에 두지 마세요!** (Git에 실수로 커밋될 수 있음)
 
+   **⚠️ 키 페어 파일을 잃어버린 경우:**
+   - EC2 키 페어는 **한 번만 다운로드 가능**하며, 삭제되면 다시 다운로드할 수 없습니다
+   - **해결 방법:**
+     1. **인스턴스가 삭제된 경우**: 새 인스턴스를 생성하고 새 키 페어를 만들면 됩니다
+     2. **인스턴스는 있는데 키 페어만 잃어버린 경우**: 아래 "키 페어 복구" 섹션 참고
+
 6. **네트워크 설정**
    - **Security group**: 새로 생성
    - **Security group name**: `studiz-server-sg`
@@ -382,6 +388,53 @@ sudo systemctl start nginx
 3. **알람 설정**: CloudWatch에서 비용 알람 설정
 
 ## 트러블슈팅
+
+### 키 페어 파일을 잃어버린 경우
+
+**상황 1: 인스턴스가 삭제된 경우**
+- 새 인스턴스를 생성하고 새 키 페어를 만들면 됩니다
+- 기존 인스턴스의 데이터는 복구할 수 없습니다
+
+**상황 2: 인스턴스는 있는데 키 페어만 잃어버린 경우**
+
+**방법 1: EC2 Instance Connect 사용 (가장 쉬움)**
+1. EC2 콘솔 → 인스턴스 선택 → **Connect** 클릭
+2. **EC2 Instance Connect** 탭 선택
+3. **Connect** 클릭 → 브라우저에서 터미널 열림
+4. 새 키 페어를 생성하고 인스턴스에 추가:
+
+```bash
+# EC2 Instance Connect로 접속한 후
+# 새 키 페어 생성 (로컬에서)
+# AWS 콘솔 → EC2 → Key Pairs → Create key pair
+# 새 키 페어 다운로드: studiz-server-key-new.pem
+
+# 로컬에서 새 키 페어의 공개키 추출
+ssh-keygen -y -f ~/.ssh/studiz-server-key-new.pem > ~/.ssh/new-key.pub
+
+# EC2 Instance Connect 터미널에서
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+vi ~/.ssh/authorized_keys
+# 위에서 추출한 공개키 내용을 붙여넣기
+chmod 600 ~/.ssh/authorized_keys
+```
+
+이제 새 키 페어로 SSH 접속 가능:
+```bash
+ssh -i ~/.ssh/studiz-server-key-new.pem ec2-user@<EC2-IP>
+```
+
+**방법 2: Systems Manager Session Manager 사용**
+1. EC2 인스턴스에 **SSM Agent** 설치 (Amazon Linux 2023는 기본 설치됨)
+2. IAM 역할에 `AmazonSSMManagedInstanceCore` 정책 추가
+3. EC2 콘솔 → 인스턴스 선택 → **Connect** → **Session Manager** 탭
+4. 위와 동일하게 새 키 페어 추가
+
+**방법 3: 새 키 페어로 인스턴스 교체 (데이터 백업 필요)**
+1. EBS 스냅샷 생성 (데이터 백업)
+2. 새 인스턴스 생성 (새 키 페어 사용)
+3. 스냅샷에서 볼륨 복원
 
 ### 애플리케이션이 시작되지 않을 때
 
