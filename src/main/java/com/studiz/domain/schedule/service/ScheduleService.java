@@ -41,21 +41,19 @@ public class ScheduleService {
         Study study = studyService.getStudy(studyId);
         studyMemberService.ensureOwner(study, user);
 
-        if (request.getStartDate().isAfter(request.getEndDate())) {
-            throw new ScheduleInvalidDateRangeException();
-        }
-
+        // endDate는 startDate와 동일하게 설정 (팀장이 시간 확정하면 끝)
+        LocalDate scheduleDate = request.getStartDate();
         Schedule schedule = Schedule.create(
                 study,
                 request.getTitle(),
-                request.getStartDate(),
-                request.getEndDate()
+                scheduleDate,
+                scheduleDate
         );
 
         Schedule saved = scheduleRepository.save(schedule);
 
-        // 1시간 단위 시간 슬롯 생성
-        List<ScheduleSlot> slots = generateTimeSlots(saved, request.getStartDate(), request.getEndDate());
+        // 해당 날짜의 1시간 단위 시간 슬롯 생성 (00:00 ~ 23:00)
+        List<ScheduleSlot> slots = generateTimeSlots(saved, scheduleDate, scheduleDate);
         scheduleSlotRepository.saveAll(slots);
 
         return ScheduleResponse.from(saved);
@@ -66,28 +64,29 @@ public class ScheduleService {
         Study study = studyService.getStudy(studyId);
         studyMemberService.ensureMember(study, user);
 
-        LocalDate startDate;
-        LocalDate endDate;
+        // 필터링 기능 제거 - 모든 일정 반환
+        List<Schedule> schedules = scheduleRepository.findByStudy(study);
 
-        if (month != null && !month.isEmpty()) {
-            // YYYY-MM 형식 파싱
-            String[] parts = month.split("-");
-            int year = Integer.parseInt(parts[0]);
-            int monthValue = Integer.parseInt(parts[1]);
-            
-            startDate = LocalDate.of(year, monthValue, 1);
-            endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-        } else {
-            // 전체 조회
-            startDate = LocalDate.MIN;
-            endDate = LocalDate.MAX;
-        }
-
-        List<Schedule> schedules = scheduleRepository.findByStudyAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
-                study, endDate, startDate
-        );
-
+        // 확정된 일정 우선, 그 다음 날짜 오름차순 정렬
         return schedules.stream()
+                .sorted((s1, s2) -> {
+                    boolean s1Confirmed = s1.getConfirmedSlot() != null;
+                    boolean s2Confirmed = s2.getConfirmedSlot() != null;
+                    
+                    if (s1Confirmed != s2Confirmed) {
+                        return s1Confirmed ? -1 : 1; // 확정된 일정이 먼저
+                    }
+                    
+                    // 둘 다 확정되었거나 둘 다 미확정인 경우 날짜 비교
+                    LocalDate date1 = s1.getConfirmedSlot() != null 
+                            ? s1.getConfirmedSlot().getStartTime().toLocalDate() 
+                            : s1.getStartDate();
+                    LocalDate date2 = s2.getConfirmedSlot() != null 
+                            ? s2.getConfirmedSlot().getStartTime().toLocalDate() 
+                            : s2.getStartDate();
+                    
+                    return date1.compareTo(date2);
+                })
                 .map(ScheduleResponse::from)
                 .toList();
     }

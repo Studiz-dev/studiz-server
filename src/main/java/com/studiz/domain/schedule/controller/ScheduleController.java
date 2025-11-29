@@ -35,20 +35,17 @@ public class ScheduleController {
             description = "스터디의 새로운 일정을 생성합니다.\n\n" +
                     "**권한**: 스터디장만 생성 가능\n\n" +
                     "**동작 방식**:\n" +
-                    "- 시작일부터 종료일까지의 모든 날짜에 대해 1시간 단위 시간 슬롯이 자동 생성됩니다.\n" +
-                    "- 예: 2024-01-15 ~ 2024-01-16이면, 각 날짜의 00:00부터 23:00까지 24개의 슬롯이 생성됩니다.\n" +
-                    "- 생성된 슬롯은 일정 상세 조회 API로 확인할 수 있습니다.\n\n" +
+                    "- 지정한 날짜에 대해 1시간 단위 시간 슬롯이 자동 생성됩니다.\n" +
+                    "- 예: 2024-01-15이면, 해당 날짜의 00:00부터 23:00까지 24개의 슬롯이 생성됩니다.\n" +
+                    "- 생성된 슬롯은 일정 상세 조회 API로 확인할 수 있습니다.\n" +
+                    "- 팀장이 시간을 확정하면 일정이 완료됩니다.\n\n" +
                     "**요청 예시**:\n" +
                     "```json\n" +
                     "{\n" +
                     "  \"title\": \"스터디 모임 일정 조율\",\n" +
-                    "  \"startDate\": \"2024-01-15\",\n" +
-                    "  \"endDate\": \"2024-01-20\"\n" +
+                    "  \"startDate\": \"2024-01-15\"\n" +
                     "}\n" +
-                    "```\n\n" +
-                    "**주의사항**:\n" +
-                    "- 시작일은 종료일보다 이전이어야 합니다.\n" +
-                    "- 날짜 범위가 너무 크면 많은 슬롯이 생성되므로 주의하세요."
+                    "```"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "일정 생성 성공", content = @Content(schema = @Schema(implementation = ScheduleResponse.class))),
@@ -67,14 +64,14 @@ public class ScheduleController {
 
     @GetMapping
     @Operation(
-            summary = "스케줄 조회",
+            summary = "일정 목록 조회",
             description = "스터디의 일정 목록을 조회합니다.\n\n" +
-                    "**파라미터**:\n" +
-                    "- `month` (선택): 특정 월의 일정만 필터링. 형식: `YYYY-MM` (예: `2024-01`)\n" +
-                    "- `month`를 생략하면 모든 일정을 조회합니다.\n\n" +
-                    "**필터링 로직**:\n" +
-                    "- 일정의 시작일 또는 종료일이 해당 월에 포함되면 조회됩니다.\n" +
-                    "- 예: 일정이 2024-01-15 ~ 2024-01-20이면, `month=2024-01`로 조회 가능합니다."
+                    "**응답 내용**:\n" +
+                    "- 일정 이름 (title)\n" +
+                    "- 장소 (location)\n" +
+                    "- 일정 시간 (YYYY M DD HH:mm 형식, 확정된 일정만)\n" +
+                    "- D-Day (오늘 기준 남은 일수, 확정된 일정만)\n\n" +
+                    "**정렬**: 확정된 일정 우선, 그 다음 날짜 오름차순"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ScheduleResponse.class))),
@@ -84,11 +81,9 @@ public class ScheduleController {
     public ResponseEntity<List<ScheduleResponse>> getSchedules(
             @Parameter(description = "스터디 ID", required = true)
             @PathVariable UUID studyId,
-            @Parameter(description = "조회할 월 (YYYY-MM 형식, 선택사항)")
-            @RequestParam(required = false) String month,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        return ResponseEntity.ok(scheduleService.getSchedules(studyId, month, userPrincipal.getUser()));
+        return ResponseEntity.ok(scheduleService.getSchedules(studyId, null, userPrincipal.getUser()));
     }
 
     @GetMapping("/{scheduleId}")
