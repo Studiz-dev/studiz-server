@@ -70,10 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return path.equals("/") ||
                path.equals("/api") ||
                path.equals("/api/") ||
-               path.startsWith("/api/auth/") ||
-               path.startsWith("/api/swagger-ui") ||
-               path.startsWith("/api/api-docs") ||
-               path.startsWith("/api/v3/api-docs") ||
+               path.startsWith("/auth/") ||  // 변경: /api/auth/ → /auth/ (context-path 제거된 경로)
                path.startsWith("/swagger-ui") ||
                path.startsWith("/api-docs") ||
                path.startsWith("/v3/api-docs");

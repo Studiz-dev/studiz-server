@@ -16,7 +16,8 @@ import lombok.NoArgsConstructor;
         example = "{\n" +
                 "  \"loginId\": \"user123\",\n" +
                 "  \"password\": \"Password123!\",\n" +
-                "  \"name\": \"홍길동\"\n" +
+                "  \"name\": \"홍길동\",\n" +
+                "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
                 "}"
 )
 public class RegisterRequest {
