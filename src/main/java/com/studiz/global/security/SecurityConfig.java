@@ -39,21 +39,16 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // 인증 없이 접근 가능한 public API
-                        // context-path(/api)를 포함한 전체 경로로 매칭
+                        // Spring Security는 context-path(/api)를 제거한 경로로 매칭함
                         .requestMatchers(
-                                "/",                         // 루트 경로 (context-path 적용 후)
-                                "/api/",                     // 루트 경로
+                                "/",                         // 루트 경로
+                                "/api/",                     // 루트 경로 (슬래시 포함)
                                 "/api",                      // 루트 경로 (슬래시 없음)
-                                "/api/auth/**",              // 로그인/회원가입
-                                "/api/swagger-ui.html",      // Swagger UI
-                                "/api/swagger-ui/**",        // Swagger UI 리소스
-                                "/api/swagger-ui/index.html", // Swagger UI 인덱스
-                                "/api/api-docs/**",          // API 문서
-                                "/api/v3/api-docs/**",       // OpenAPI 3.0 문서
-                                "/swagger-ui/**",            // Swagger UI 정적 리소스 (context-path 없이)
-                                "/swagger-ui.html",          // Swagger UI (context-path 없이)
-                                "/api-docs/**",              // API 문서 (context-path 없이)
-                                "/v3/api-docs/**"            // OpenAPI 3.0 문서 (context-path 없이)
+                                "/auth/**",                  // 로그인/회원가입 (변경: /api/auth/** → /auth/**)
+                                "/swagger-ui.html",          // Swagger UI
+                                "/swagger-ui/**",            // Swagger UI 리소스
+                                "/api-docs/**",              // API 문서
+                                "/v3/api-docs/**"            // OpenAPI 3.0 문서
                         ).permitAll()
 
                         // OPTIONS(프리플라이트 요청) 허용
