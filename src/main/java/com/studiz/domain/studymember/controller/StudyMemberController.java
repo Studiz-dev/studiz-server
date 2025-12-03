@@ -51,30 +51,4 @@ public class StudyMemberController {
         studyMemberService.joinStudy(study, userPrincipal.getUser());
         return ResponseEntity.ok("스터디 가입 완료");
     }
-
-    @DeleteMapping("/leave/{inviteCode}")
-    @Operation(
-            summary = "스터디 탈퇴",
-            description = "스터디에서 탈퇴합니다.\n\n" +
-                    "**요청 예시**:\n" +
-                    "`DELETE /study-members/leave/abc12345`\n\n" +
-                    "**주의사항**:\n" +
-                    "- 스터디장은 탈퇴 전에 권한을 위임해야 합니다.\n" +
-                    "- 마지막 스터디장은 탈퇴할 수 없습니다.\n" +
-                    "- 탈퇴 후에는 스터디에 접근할 수 없습니다."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "탈퇴 성공"),
-            @ApiResponse(responseCode = "400", description = "스터디장은 탈퇴할 수 없음 (권한 위임 필요)"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 초대코드 또는 멤버가 아님")
-    })
-    public ResponseEntity<String> leaveStudy(
-            @Parameter(description = "초대코드 (8자리)", example = "abc12345", required = true)
-            @PathVariable String inviteCode,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        Study study = studyService.findByInviteCode(inviteCode);
-        studyMemberService.leaveStudy(study, userPrincipal.getUser());
-        return ResponseEntity.ok("스터디 탈퇴 완료");
-    }
 }

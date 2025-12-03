@@ -32,11 +32,18 @@ public class Study {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false, length = 100)
+    private String meetingName;
+
+    @Column(nullable = false)
+    private Integer maxMembers;
+
+    @Column(nullable = false, length = 100)
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private StudyStatus status = StudyStatus.ACTIVE;
 
     @CreationTimestamp
@@ -46,10 +53,16 @@ public class Study {
     private LocalDateTime updatedAt;
 
     /** --- 생성 메서드 --- */
-    public static Study create(String name, String description, User owner) {
+    public static Study create(String name,
+                               String meetingName,
+                               Integer maxMembers,
+                               String password,
+                               User owner) {
         return Study.builder()
                 .name(name)
-                .description(description)
+                .meetingName(meetingName)
+                .maxMembers(maxMembers)
+                .password(password)
                 .owner(owner)
                 .inviteCode(UUID.randomUUID().toString().substring(0, 8))
                 .status(StudyStatus.ACTIVE)
@@ -64,15 +77,25 @@ public class Study {
         this.status = StudyStatus.COMPLETED;
     }
     
-    public void updateInfo(String name, String description, StudyStatus status) {
+    public void updateInfo(String name,
+                           String meetingName,
+                           Integer maxMembers,
+                           StudyStatus status,
+                           String password) {
         if (name != null && !name.isBlank()) {
             this.name = name;
         }
-        if (description != null) {
-            this.description = description;
+        if (meetingName != null && !meetingName.isBlank()) {
+            this.meetingName = meetingName;
+        }
+        if (maxMembers != null && maxMembers > 0) {
+            this.maxMembers = maxMembers;
         }
         if (status != null) {
             this.status = status;
+        }
+        if (password != null && !password.isBlank()) {
+            this.password = password;
         }
     }
 }

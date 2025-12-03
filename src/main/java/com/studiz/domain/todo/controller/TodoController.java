@@ -39,18 +39,18 @@ public class TodoController {
                     "```json\n" +
                     "{\n" +
                     "  \"name\": \"Chapter 1 문제 풀이\",\n" +
-                    "  \"description\": \"Java 기초 Chapter 1 문제를 풀고 제출하세요.\",\n" +
                     "  \"dueDate\": \"2024-01-20T23:59:59\",\n" +
-                    "  \"certificationType\": \"TEXT_NOTE\",\n" +
+                    "  \"certificationTypes\": [\"TEXT_NOTE\", \"FILE_UPLOAD\"],\n" +
                     "  \"participantIds\": [1, 2, 3]\n" +
                     "}\n" +
                     "```\n\n" +
                     "**인증 방식**:\n" +
                     "- `TEXT_NOTE`: 텍스트 인증 (완료 시 텍스트 입력)\n" +
-                    "- `FILE_UPLOAD`: 파일 업로드 인증 (향후 구현 예정)\n\n" +
+                    "- `FILE_UPLOAD`: 파일 업로드 인증\n" +
+                    "- 두 방식을 함께 선택할 수도 있습니다.\n\n" +
                     "**주의사항**:\n" +
                     "- `participantIds`에 포함된 사용자는 모두 스터디 멤버여야 합니다.\n" +
-                    "- 참여자들에게 자동으로 알림이 전송됩니다."
+                    "- 참여자 알림은 전송되지 않습니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Todo 생성 성공", content = @Content(schema = @Schema(implementation = TodoDetailResponse.class))),
@@ -95,8 +95,9 @@ public class TodoController {
             summary = "Todo 상세 조회",
             description = "특정 할 일의 상세 정보를 조회합니다.\n\n" +
                     "**응답 내용**:\n" +
-                    "- Todo 기본 정보\n" +
-                    "- 참여자 목록 및 각 참여자의 완료 상태\n\n" +
+                    "- 모임명, 완료 기한, 할 일명, 완료율(%)\n" +
+                    "- 완료 멤버 목록 + 인증 파일/소감문(완료 멤버 클릭 시 확인)\n" +
+                    "- 미완료 멤버 목록\n\n" +
                     "**권한**: 스터디 멤버만 접근 가능"
     )
     @ApiResponses({
@@ -150,4 +151,3 @@ public class TodoController {
         return ResponseEntity.ok("할 일이 완료되었습니다.");
     }
 }
-

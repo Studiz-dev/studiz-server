@@ -57,7 +57,7 @@ class TodoServiceTest {
                 .name("Member")
                 .build());
         
-        study = studyService.createStudy("스터디", "설명", owner);
+        study = studyService.createStudy("스터디", "모임", 10, "pass", owner);
         studyMemberService.joinStudy(study, participant);
     }
     
@@ -66,18 +66,18 @@ class TodoServiceTest {
     void createTodo() {
         TodoCreateRequest request = new TodoCreateRequest();
         request.setName("자료 조사");
-        request.setDescription("다음 모임 전까지 조사");
         request.setDueDate(LocalDateTime.now().plusDays(2));
-        request.setCertificationType(TodoCertificationType.TEXT_NOTE);
+        request.setCertificationTypes(List.of(TodoCertificationType.TEXT_NOTE));
         request.setParticipantIds(List.of(participant.getId()));
         
         TodoDetailResponse response = todoService.createTodo(study.getId(), request, owner);
-        assertThat(response.getTodo().getName()).isEqualTo("자료 조사");
-        assertThat(response.getMembers()).hasSize(1);
+        assertThat(response.getName()).isEqualTo("자료 조사");
+        assertThat(response.getCompletedMembers()).isEmpty();
+        assertThat(response.getPendingMembers()).hasSize(1);
         
         List<TodoResponse> todos = todoService.getTodos(study.getId(), owner);
         assertThat(todos).hasSize(1);
-        assertThat(todos.get(0).getCompletedCount()).isZero();
+        assertThat(todos.get(0).getCompletionRate()).isZero();
     }
     
     @Test
@@ -85,20 +85,19 @@ class TodoServiceTest {
     void completeTodo() {
         TodoCreateRequest request = new TodoCreateRequest();
         request.setName("자료 조사");
-        request.setDescription("다음 모임 전까지 조사");
         request.setDueDate(LocalDateTime.now().plusDays(2));
-        request.setCertificationType(TodoCertificationType.TEXT_NOTE);
+        request.setCertificationTypes(List.of(TodoCertificationType.TEXT_NOTE));
         request.setParticipantIds(List.of(participant.getId()));
         
         TodoDetailResponse detail = todoService.createTodo(study.getId(), request, owner);
-        UUID todoId = detail.getTodo().getId();
+        UUID todoId = detail.getId();
         
         TodoCompleteRequest completeRequest = new TodoCompleteRequest();
-        completeRequest.setContent("조사 완료");
+        completeRequest.setTextContent("조사 완료");
         todoService.completeTodo(study.getId(), todoId, participant, completeRequest);
         
         TodoDetailResponse after = todoService.getTodoDetail(study.getId(), todoId, owner);
-        assertThat(after.getTodo().getCompletedCount()).isEqualTo(1);
-        assertThat(after.getTodo().getStatus().name()).isEqualTo("COMPLETED");
+        assertThat(after.getCompletionRate()).isEqualTo(100);
+        assertThat(after.getCompletedMembers()).hasSize(1);
     }
 }

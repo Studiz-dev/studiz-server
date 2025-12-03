@@ -32,7 +32,13 @@ public class TodoMember {
     private User user;
     
     @Column(columnDefinition = "TEXT")
-    private String certificationContent;
+    private String certificationText;
+
+    @Column(length = 500)
+    private String certificationFileUrl;
+
+    @Column(length = 100)
+    private String reflection;
     
     @Column(nullable = false)
     @Builder.Default
@@ -48,10 +54,11 @@ public class TodoMember {
                 .build();
     }
     
-    public void complete(String content) {
-        this.certificationContent = content;
+    public void complete(String textContent, String fileUrl, String reflection) {
+        this.certificationText = textContent;
+        this.certificationFileUrl = fileUrl;
+        this.reflection = reflection;
         this.completed = true;
         this.completedAt = LocalDateTime.now();
     }
 }
-

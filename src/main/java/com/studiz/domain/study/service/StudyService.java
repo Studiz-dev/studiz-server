@@ -25,9 +25,13 @@ public class StudyService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyMemberService studyMemberService;
 
-    public Study createStudy(String name, String description, User owner) {
+    public Study createStudy(String name,
+                             String meetingName,
+                             Integer maxMembers,
+                             String password,
+                             User owner) {
 
-        Study study = Study.create(name, description, owner);
+        Study study = Study.create(name, meetingName, maxMembers, password, owner);
         Study saved = studyRepository.save(study);
 
         // 스터디장 자동 등록
@@ -56,7 +60,13 @@ public class StudyService {
     public Study updateStudy(UUID studyId, StudyUpdateRequest request, User user) {
         Study study = getStudy(studyId);
         studyMemberService.ensureOwner(study, user);
-        study.updateInfo(request.getName(), request.getDescription(), request.getStatus());
+        study.updateInfo(
+                request.getName(),
+                request.getMeetingName(),
+                request.getMaxMembers(),
+                request.getStatus(),
+                request.getPassword()
+        );
         return study;
     }
     
