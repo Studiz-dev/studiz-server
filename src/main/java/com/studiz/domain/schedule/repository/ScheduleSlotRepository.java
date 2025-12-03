@@ -18,3 +18,4 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, UUID
 
 
 
+
