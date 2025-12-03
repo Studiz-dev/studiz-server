@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -33,15 +35,15 @@ public class Todo extends BaseEntity {
     @Column(nullable = false)
     private String name;
     
-    @Column(columnDefinition = "TEXT")
-    private String description;
-    
     @Column(nullable = false)
     private LocalDateTime dueDate;
     
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "todo_certification_types", joinColumns = @JoinColumn(name = "todo_id"))
+    @Column(name = "certification_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TodoCertificationType certificationType;
+    @Builder.Default
+    private Set<TodoCertificationType> certificationTypes = new HashSet<>();
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -54,15 +56,13 @@ public class Todo extends BaseEntity {
     
     public static Todo create(Study study,
                               String name,
-                              String description,
                               LocalDateTime dueDate,
-                              TodoCertificationType certificationType) {
+                              Set<TodoCertificationType> certificationTypes) {
         return Todo.builder()
                 .study(study)
                 .name(name)
-                .description(description)
                 .dueDate(dueDate)
-                .certificationType(certificationType)
+                .certificationTypes(certificationTypes)
                 .status(TodoStatus.ACTIVE)
                 .build();
     }

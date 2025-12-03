@@ -3,7 +3,6 @@ package com.studiz.domain.study.controller;
 import com.studiz.domain.study.dto.StudyCreateRequest;
 import com.studiz.domain.study.dto.StudyDetailResponse;
 import com.studiz.domain.study.dto.StudyResponse;
-import com.studiz.domain.study.dto.StudyUpdateRequest;
 import com.studiz.domain.study.entity.Study;
 import com.studiz.domain.study.service.StudyService;
 import com.studiz.domain.studymember.service.StudyMemberService;
@@ -61,7 +60,9 @@ public class StudyController {
     ) {
         Study study = studyService.createStudy(
                 request.getName(),
-                request.getDescription(),
+                request.getMeetingName(),
+                request.getMaxMembers(),
+                request.getPassword(),
                 userPrincipal.getUser()
         );
 
@@ -111,98 +112,5 @@ public class StudyController {
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return ResponseEntity.ok(studyService.getStudyDetail(studyId, userPrincipal.getUser()));
-    }
-    
-    @PutMapping("/{studyId}")
-    @Operation(
-            summary = "스터디 정보 수정",
-            description = "스터디의 이름, 설명, 상태를 수정합니다.\n\n" +
-                    "**권한**: 스터디장만 가능\n\n" +
-                    "**요청 예시**:\n" +
-                    "```json\n" +
-                    "{\n" +
-                    "  \"name\": \"Java 고급 스터디\",\n" +
-                    "  \"description\": \"Java 고급 프로그래밍을 함께 공부합니다.\",\n" +
-                    "  \"status\": \"ACTIVE\"\n" +
-                    "}\n" +
-                    "```\n\n" +
-                    "**주의사항**:\n" +
-                    "- 모든 필드는 선택사항입니다. 전송한 필드만 업데이트됩니다.\n" +
-                    "- `status`는 ACTIVE, INACTIVE, COMPLETED 중 하나입니다."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(schema = @Schema(implementation = StudyResponse.class))),
-            @ApiResponse(responseCode = "403", description = "스터디장 권한 필요"),
-            @ApiResponse(responseCode = "404", description = "스터디를 찾을 수 없음")
-    })
-    public ResponseEntity<StudyResponse> updateStudy(
-            @Parameter(description = "스터디 ID", required = true)
-            @PathVariable UUID studyId,
-            @Valid @RequestBody StudyUpdateRequest request,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        Study updated = studyService.updateStudy(studyId, request, userPrincipal.getUser());
-        return ResponseEntity.ok(StudyResponse.from(updated));
-    }
-    
-    @DeleteMapping("/{studyId}/members/{memberId}")
-    @Operation(
-            summary = "스터디 멤버 강퇴",
-            description = "스터디에서 멤버를 강퇴합니다.\n\n" +
-                    "**권한**: 스터디장만 가능\n\n" +
-                    "**요청 예시**:\n" +
-                    "`DELETE /studies/{studyId}/members/{memberId}`\n\n" +
-                    "**주의사항**:\n" +
-                    "- 스터디장은 강퇴할 수 없습니다.\n" +
-                    "- `memberId`는 StudyMember의 ID입니다 (User ID가 아님)."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "강퇴 성공"),
-            @ApiResponse(responseCode = "400", description = "스터디장은 강퇴할 수 없음"),
-            @ApiResponse(responseCode = "403", description = "스터디장 권한 필요"),
-            @ApiResponse(responseCode = "404", description = "스터디 또는 멤버를 찾을 수 없음")
-    })
-    public ResponseEntity<String> kickStudyMember(
-            @Parameter(description = "스터디 ID", required = true)
-            @PathVariable UUID studyId,
-            @Parameter(description = "멤버 ID (StudyMember ID)", required = true)
-            @PathVariable Long memberId,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        Study study = studyService.getStudy(studyId);
-        studyMemberService.kickMember(study, userPrincipal.getUser(), memberId);
-        return ResponseEntity.ok("스터디 강퇴 완료");
-    }
-    
-    @PostMapping("/{studyId}/members/{memberId}/delegate")
-    @Operation(
-            summary = "스터디장 위임",
-            description = "스터디장 권한을 다른 멤버에게 위임합니다.\n\n" +
-                    "**권한**: 현재 스터디장만 가능\n\n" +
-                    "**요청 예시**:\n" +
-                    "`POST /studies/{studyId}/members/{memberId}/delegate`\n\n" +
-                    "**동작**:\n" +
-                    "- 현재 스터디장은 일반 멤버로 변경됩니다.\n" +
-                    "- 지정한 멤버가 새로운 스터디장이 됩니다.\n\n" +
-                    "**주의사항**:\n" +
-                    "- 이미 스터디장인 멤버에게는 위임할 수 없습니다.\n" +
-                    "- `memberId`는 StudyMember의 ID입니다."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "위임 성공"),
-            @ApiResponse(responseCode = "400", description = "이미 스터디장인 멤버"),
-            @ApiResponse(responseCode = "403", description = "스터디장 권한 필요"),
-            @ApiResponse(responseCode = "404", description = "스터디 또는 멤버를 찾을 수 없음")
-    })
-    public ResponseEntity<String> delegateStudyOwner(
-            @Parameter(description = "스터디 ID", required = true)
-            @PathVariable UUID studyId,
-            @Parameter(description = "멤버 ID (StudyMember ID)", required = true)
-            @PathVariable Long memberId,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        Study study = studyService.getStudy(studyId);
-        studyMemberService.delegateOwnership(study, userPrincipal.getUser(), memberId);
-        return ResponseEntity.ok("스터디장 위임 완료");
     }
 }

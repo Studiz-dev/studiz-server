@@ -21,8 +21,11 @@ public class StudyResponse {
     @Schema(description = "초대코드 (8자리)", example = "abc12345")
     private String inviteCode;
     
-    @Schema(description = "스터디 설명", example = "Java 프로그래밍 기초를 함께 공부합니다.")
-    private String description;
+    @Schema(description = "모임명", example = "주 2회 실시간 모임")
+    private String meetingName;
+    
+    @Schema(description = "최대 인원", example = "10")
+    private Integer maxMembers;
     
     @Schema(description = "스터디 상태 (ACTIVE, INACTIVE, COMPLETED)", example = "ACTIVE")
     private String status;
@@ -35,7 +38,8 @@ public class StudyResponse {
                 .id(study.getId())
                 .name(study.getName())
                 .inviteCode(study.getInviteCode())
-                .description(study.getDescription())
+                .meetingName(study.getMeetingName())
+                .maxMembers(study.getMaxMembers())
                 .status(study.getStatus().name())
                 .createdAt(study.getCreatedAt())
                 .build();

@@ -30,8 +30,14 @@ public class TodoMemberResponse {
     @Schema(description = "완료 일시 (완료되지 않았으면 null)", example = "2024-01-18T15:30:00", nullable = true)
     private final LocalDateTime completedAt;
     
-    @Schema(description = "인증 내용 (완료되지 않았으면 null)", example = "문제를 모두 풀었습니다.", nullable = true)
-    private final String certificationContent;
+    @Schema(description = "텍스트 인증 내용 (완료되지 않았으면 null)", example = "문제를 모두 풀었습니다.", nullable = true)
+    private final String certificationText;
+
+    @Schema(description = "파일 인증 URL (완료되지 않았으면 null)", example = "https://example.com/proof.pdf", nullable = true)
+    private final String certificationFileUrl;
+
+    @Schema(description = "소감문 (완료되지 않았으면 null)", example = "과제가 유익했습니다.", nullable = true)
+    private final String reflection;
     
     public static TodoMemberResponse from(TodoMember member) {
         return TodoMemberResponse.builder()
@@ -41,8 +47,9 @@ public class TodoMemberResponse {
                 .name(member.getUser().getName())
                 .completed(member.isCompleted())
                 .completedAt(member.getCompletedAt())
-                .certificationContent(member.getCertificationContent())
+                .certificationText(member.getCertificationText())
+                .certificationFileUrl(member.getCertificationFileUrl())
+                .reflection(member.getReflection())
                 .build();
     }
 }
-

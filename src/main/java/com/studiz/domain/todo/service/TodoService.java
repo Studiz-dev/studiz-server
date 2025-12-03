@@ -1,7 +1,5 @@
 package com.studiz.domain.todo.service;
 
-import com.studiz.domain.notification.entity.NotificationType;
-import com.studiz.domain.notification.service.NotificationService;
 import com.studiz.domain.study.entity.Study;
 import com.studiz.domain.study.service.StudyService;
 import com.studiz.domain.studymember.repository.StudyMemberRepository;
@@ -12,6 +10,7 @@ import com.studiz.domain.todo.dto.TodoDetailResponse;
 import com.studiz.domain.todo.dto.TodoResponse;
 import com.studiz.domain.todo.entity.Todo;
 import com.studiz.domain.todo.entity.TodoMember;
+import com.studiz.domain.todo.entity.TodoCertificationType;
 import com.studiz.domain.todo.exception.*;
 import com.studiz.domain.todo.repository.TodoMemberRepository;
 import com.studiz.domain.todo.repository.TodoRepository;
@@ -25,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,7 +39,6 @@ public class TodoService {
     private final StudyMemberService studyMemberService;
     private final StudyMemberRepository studyMemberRepository;
     private final UserRepository userRepository;
-    private final NotificationService notificationService;
     
     public TodoDetailResponse createTodo(UUID studyId, TodoCreateRequest request, User owner) {
         Study study = studyService.getStudy(studyId);
@@ -47,6 +46,9 @@ public class TodoService {
         
         if (CollectionUtils.isEmpty(request.getParticipantIds())) {
             throw new TodoParticipantRequiredException();
+        }
+        if (CollectionUtils.isEmpty(request.getCertificationTypes())) {
+            throw new TodoCertificationRequiredException();
         }
         
         List<User> participants = request.getParticipantIds().stream()
@@ -60,9 +62,8 @@ public class TodoService {
         Todo todo = Todo.create(
                 study,
                 request.getName(),
-                request.getDescription(),
                 request.getDueDate(),
-                request.getCertificationType()
+                Set.copyOf(request.getCertificationTypes())
         );
         
         participants.forEach(user -> {
@@ -71,18 +72,7 @@ public class TodoService {
         });
         
         Todo saved = todoRepository.save(todo);
-        
-        // Todo 생성 알림을 참여자들에게 전송
-        participants.forEach(participant -> {
-            notificationService.createNotification(
-                    participant,
-                    NotificationType.TODO_CREATED,
-                    "새로운 할 일이 생성되었습니다",
-                    String.format("'%s' 스터디에 '%s' 할 일이 추가되었습니다.", study.getName(), saved.getName()),
-                    saved.getId()
-            );
-        });
-        
+
         return TodoDetailResponse.from(saved);
     }
     
@@ -114,12 +104,20 @@ public class TodoService {
         if (todoMember.isCompleted()) {
             throw new TodoAlreadyCompletedException();
         }
-        
-        if (!StringUtils.hasText(request.getContent())) {
-            throw new TodoCertificationRequiredException();
+
+        // 인증 방식별 필수 값 확인
+        if (todo.getCertificationTypes().contains(TodoCertificationType.TEXT_NOTE)) {
+            if (!StringUtils.hasText(request.getTextContent())) {
+                throw new TodoCertificationRequiredException();
+            }
         }
-        
-        todoMember.complete(request.getContent());
+        if (todo.getCertificationTypes().contains(TodoCertificationType.FILE_UPLOAD)) {
+            if (!StringUtils.hasText(request.getFileUrl())) {
+                throw new TodoCertificationRequiredException();
+            }
+        }
+
+        todoMember.complete(request.getTextContent(), request.getFileUrl(), request.getReflection());
         todoMemberRepository.save(todoMember);
         
         long remaining = todoMemberRepository.countByTodoAndCompletedFalse(todo);
