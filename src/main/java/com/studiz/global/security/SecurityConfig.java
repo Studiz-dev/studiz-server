@@ -45,6 +45,7 @@ public class SecurityConfig {
                                 "/api/",                     // 루트 경로 (슬래시 포함)
                                 "/api",                      // 루트 경로 (슬래시 없음)
                                 "/auth/**",                  // 로그인/회원가입 (변경: /api/auth/** → /auth/**)
+                                "/files/**",                 // 파일 업로드 및 접근
                                 "/swagger-ui.html",          // Swagger UI
                                 "/swagger-ui/**",            // Swagger UI 리소스
                                 "/api-docs/**",              // API 문서

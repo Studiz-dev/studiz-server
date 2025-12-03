@@ -2,6 +2,12 @@ spring:
   application:
     name: studiz-server
   
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  
   datasource:
     # Render에서 제공하는 connectionString은 postgresql:// 형식이므로 사용하지 않음
     # 항상 개별 필드로 jdbc:postgresql:// 형식으로 구성
@@ -47,6 +53,11 @@ server:
   port: 8080
   servlet:
     context-path: /api
+
+# File Upload
+file:
+  upload-dir: uploads
+  base-url: ${FILE_BASE_URL:http://localhost:8080/api/files}
 
 # Logging
 logging:

@@ -1,0 +1,184 @@
+-- ============================================
+-- Studiz 서버 테스트용 예시 데이터
+-- ============================================
+-- 사용 전: 비밀번호 해시를 실제 BCrypt 해시로 변경해야 합니다.
+-- BCrypt 해시 생성 방법:
+--   - Spring Boot 애플리케이션에서 PasswordEncoder로 암호화
+--   - 또는 온라인 BCrypt 해시 생성기 사용
+
+-- ============================================
+-- 1. 사용자 (Users)
+-- ============================================
+-- 비밀번호: Password123! (BCrypt 해시 필요)
+-- 실제 사용 시 아래 해시를 애플리케이션에서 생성한 해시로 교체하세요
+INSERT INTO users (login_id, password, name, profile_image_url, created_at, updated_at) VALUES
+('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '관리자', 'https://example.com/profile/admin.jpg', NOW(), NOW()),
+('user1', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '홍길동', 'https://example.com/profile/user1.jpg', NOW(), NOW()),
+('user2', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '김철수', 'https://example.com/profile/user2.jpg', NOW(), NOW()),
+('user3', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '이영희', NULL, NOW(), NOW()),
+('user4', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '박민수', NULL, NOW(), NOW())
+ON CONFLICT (login_id) DO NOTHING;
+
+-- ============================================
+-- 2. 스터디 (Studies)
+-- ============================================
+-- owner_id는 위에서 생성한 users.id를 참조합니다
+INSERT INTO studies (id, name, invite_code, owner_id, description, status, created_at, updated_at) VALUES
+('550e8400-e29b-41d4-a716-446655440001', '알고리즘 스터디', 'ALGO2024', (SELECT id FROM users WHERE login_id = 'admin'), '매주 화요일 알고리즘 문제 풀이 스터디입니다.', 'ACTIVE', NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440002', 'Spring Boot 스터디', 'SPRING01', (SELECT id FROM users WHERE login_id = 'user1'), 'Spring Boot와 JPA를 활용한 백엔드 개발 스터디', 'ACTIVE', NOW(), NOW()),
+('550e8400-e29b-41d4-a716-446655440003', 'React 스터디', 'REACT01', (SELECT id FROM users WHERE login_id = 'user2'), 'React와 TypeScript를 배우는 프론트엔드 스터디', 'ACTIVE', NOW(), NOW())
+ON CONFLICT (invite_code) DO NOTHING;
+
+-- ============================================
+-- 3. 스터디 멤버 (Study Members)
+-- ============================================
+INSERT INTO study_members (study_id, user_id, role, joined_at, created_at) VALUES
+-- 알고리즘 스터디 멤버
+((SELECT id FROM studies WHERE invite_code = 'ALGO2024'), (SELECT id FROM users WHERE login_id = 'admin'), 'OWNER', NOW(), NOW()),
+((SELECT id FROM studies WHERE invite_code = 'ALGO2024'), (SELECT id FROM users WHERE login_id = 'user1'), 'MEMBER', NOW(), NOW()),
+((SELECT id FROM studies WHERE invite_code = 'ALGO2024'), (SELECT id FROM users WHERE login_id = 'user2'), 'MEMBER', NOW(), NOW()),
+((SELECT id FROM studies WHERE invite_code = 'ALGO2024'), (SELECT id FROM users WHERE login_id = 'user3'), 'MEMBER', NOW(), NOW()),
+
+-- Spring Boot 스터디 멤버
+((SELECT id FROM studies WHERE invite_code = 'SPRING01'), (SELECT id FROM users WHERE login_id = 'user1'), 'OWNER', NOW(), NOW()),
+((SELECT id FROM studies WHERE invite_code = 'SPRING01'), (SELECT id FROM users WHERE login_id = 'user2'), 'MEMBER', NOW(), NOW()),
+((SELECT id FROM studies WHERE invite_code = 'SPRING01'), (SELECT id FROM users WHERE login_id = 'user4'), 'MEMBER', NOW(), NOW()),
+
+-- React 스터디 멤버
+((SELECT id FROM studies WHERE invite_code = 'REACT01'), (SELECT id FROM users WHERE login_id = 'user2'), 'OWNER', NOW(), NOW()),
+((SELECT id FROM studies WHERE invite_code = 'REACT01'), (SELECT id FROM users WHERE login_id = 'user3'), 'MEMBER', NOW(), NOW()),
+((SELECT id FROM studies WHERE invite_code = 'REACT01'), (SELECT id FROM users WHERE login_id = 'user4'), 'MEMBER', NOW(), NOW())
+ON CONFLICT (study_id, user_id) DO NOTHING;
+
+-- ============================================
+-- 4. 일정 (Schedules)
+-- ============================================
+INSERT INTO schedules (id, study_id, title, location, start_date, end_date, confirmed_slot_id, created_at, updated_at) VALUES
+-- 알고리즘 스터디 일정
+('660e8400-e29b-41d4-a716-446655440001', (SELECT id FROM studies WHERE invite_code = 'ALGO2024'), '1주차 모임', '강남 스터디룸 A', '2024-12-10', '2024-12-10', NULL, NOW(), NOW()),
+('660e8400-e29b-41d4-a716-446655440002', (SELECT id FROM studies WHERE invite_code = 'ALGO2024'), '2주차 모임', '강남 스터디룸 B', '2024-12-17', '2024-12-17', NULL, NOW(), NOW()),
+('660e8400-e29b-41d4-a716-446655440003', (SELECT id FROM studies WHERE invite_code = 'ALGO2024'), '3주차 모임', '온라인', '2024-12-24', '2024-12-24', NULL, NOW(), NOW()),
+
+-- Spring Boot 스터디 일정
+('660e8400-e29b-41d4-a716-446655440004', (SELECT id FROM studies WHERE invite_code = 'SPRING01'), 'JPA 학습', '서초 스터디룸', '2024-12-15', '2024-12-15', NULL, NOW(), NOW()),
+('660e8400-e29b-41d4-a716-446655440005', (SELECT id FROM studies WHERE invite_code = 'SPRING01'), '프로젝트 발표', '강남 스터디룸 C', '2024-12-22', '2024-12-22', NULL, NOW(), NOW()),
+
+-- React 스터디 일정
+('660e8400-e29b-41d4-a716-446655440006', (SELECT id FROM studies WHERE invite_code = 'REACT01'), '컴포넌트 설계', '온라인', '2024-12-12', '2024-12-12', NULL, NOW(), NOW())
+ON CONFLICT DO NOTHING;
+
+-- ============================================
+-- 5. 일정 슬롯 (Schedule Slots)
+-- ============================================
+-- 첫 번째 일정의 시간 슬롯 생성 (2024-12-10, 14:00 ~ 15:00)
+INSERT INTO schedule_slots (id, schedule_id, start_time, end_time) VALUES
+('770e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440001', '2024-12-10 14:00:00', '2024-12-10 15:00:00'),
+('770e8400-e29b-41d4-a716-446655440002', '660e8400-e29b-41d4-a716-446655440001', '2024-12-10 15:00:00', '2024-12-10 16:00:00'),
+('770e8400-e29b-41d4-a716-446655440003', '660e8400-e29b-41d4-a716-446655440001', '2024-12-10 16:00:00', '2024-12-10 17:00:00')
+ON CONFLICT DO NOTHING;
+
+-- 첫 번째 일정의 확정 슬롯 설정 (14:00 ~ 15:00)
+UPDATE schedules SET confirmed_slot_id = '770e8400-e29b-41d4-a716-446655440001' WHERE id = '660e8400-e29b-41d4-a716-446655440001';
+
+-- 두 번째 일정의 시간 슬롯 생성 (2024-12-17, 10:00 ~ 11:00)
+INSERT INTO schedule_slots (id, schedule_id, start_time, end_time) VALUES
+('770e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440002', '2024-12-17 10:00:00', '2024-12-17 11:00:00'),
+('770e8400-e29b-41d4-a716-446655440005', '660e8400-e29b-41d4-a716-446655440002', '2024-12-17 11:00:00', '2024-12-17 12:00:00')
+ON CONFLICT DO NOTHING;
+
+-- 두 번째 일정의 확정 슬롯 설정 (10:00 ~ 11:00)
+UPDATE schedules SET confirmed_slot_id = '770e8400-e29b-41d4-a716-446655440004' WHERE id = '660e8400-e29b-41d4-a716-446655440002';
+
+-- ============================================
+-- 6. 일정 가용성 (Schedule Availability)
+-- ============================================
+-- 첫 번째 일정 슬롯의 가용성
+INSERT INTO schedule_availability (slot_id, user_id, available) VALUES
+('770e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'admin'), true),
+('770e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'user1'), true),
+('770e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'user2'), false),
+('770e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'user3'), true),
+
+('770e8400-e29b-41d4-a716-446655440002', (SELECT id FROM users WHERE login_id = 'admin'), false),
+('770e8400-e29b-41d4-a716-446655440002', (SELECT id FROM users WHERE login_id = 'user1'), true),
+('770e8400-e29b-41d4-a716-446655440002', (SELECT id FROM users WHERE login_id = 'user2'), true),
+('770e8400-e29b-41d4-a716-446655440002', (SELECT id FROM users WHERE login_id = 'user3'), false)
+ON CONFLICT (slot_id, user_id) DO NOTHING;
+
+-- ============================================
+-- 7. 할 일 (Todos)
+-- ============================================
+INSERT INTO todos (id, study_id, name, description, due_date, certification_type, status, created_at, updated_at) VALUES
+-- 알고리즘 스터디 할 일
+('880e8400-e29b-41d4-a716-446655440001', (SELECT id FROM studies WHERE invite_code = 'ALGO2024'), '백준 1000번 문제 풀이', '기본 입출력 문제를 풀고 인증하세요', '2024-12-08 23:59:59', 'FILE_UPLOAD', 'ACTIVE', NOW(), NOW()),
+('880e8400-e29b-41d4-a716-446655440002', (SELECT id FROM studies WHERE invite_code = 'ALGO2024'), '백준 1001번 문제 풀이', '사칙연산 문제를 풀고 인증하세요', '2024-12-15 23:59:59', 'FILE_UPLOAD', 'ACTIVE', NOW(), NOW()),
+('880e8400-e29b-41d4-a716-446655440003', (SELECT id FROM studies WHERE invite_code = 'ALGO2024'), '알고리즘 정리 노트 작성', '이번 주 학습한 알고리즘을 정리하세요', '2024-12-20 23:59:59', 'TEXT_NOTE', 'ACTIVE', NOW(), NOW()),
+
+-- Spring Boot 스터디 할 일
+('880e8400-e29b-41d4-a716-446655440004', (SELECT id FROM studies WHERE invite_code = 'SPRING01'), 'JPA 엔티티 설계', 'User, Study 엔티티를 설계하고 ERD를 작성하세요', '2024-12-14 23:59:59', 'TEXT_NOTE', 'ACTIVE', NOW(), NOW()),
+('880e8400-e29b-41d4-a716-446655440005', (SELECT id FROM studies WHERE invite_code = 'SPRING01'), 'REST API 구현', '회원가입, 로그인 API를 구현하세요', '2024-12-21 23:59:59', 'FILE_UPLOAD', 'ACTIVE', NOW(), NOW()),
+
+-- React 스터디 할 일
+('880e8400-e29b-41d4-a716-446655440006', (SELECT id FROM studies WHERE invite_code = 'REACT01'), '컴포넌트 구조 설계', 'TodoList 컴포넌트의 구조를 설계하세요', '2024-12-11 23:59:59', 'TEXT_NOTE', 'ACTIVE', NOW(), NOW())
+ON CONFLICT DO NOTHING;
+
+-- ============================================
+-- 8. 할 일 멤버 (Todo Members)
+-- ============================================
+INSERT INTO todo_members (todo_id, user_id, certification_content, completed, completed_at) VALUES
+-- 첫 번째 할 일 (완료된 멤버와 미완료 멤버)
+('880e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'admin'), '백준 1000번 문제 해결 완료!', true, '2024-12-07 15:30:00'),
+('880e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'user1'), NULL, false, NULL),
+('880e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'user2'), NULL, false, NULL),
+
+-- 두 번째 할 일
+('880e8400-e29b-41d4-a716-446655440002', (SELECT id FROM users WHERE login_id = 'user1'), NULL, false, NULL),
+('880e8400-e29b-41d4-a716-446655440002', (SELECT id FROM users WHERE login_id = 'user3'), NULL, false, NULL),
+
+-- 세 번째 할 일
+('880e8400-e29b-41d4-a716-446655440003', (SELECT id FROM users WHERE login_id = 'admin'), '정렬 알고리즘 정리 완료', true, '2024-12-19 20:00:00'),
+('880e8400-e29b-41d4-a716-446655440003', (SELECT id FROM users WHERE login_id = 'user2'), NULL, false, NULL),
+
+-- 네 번째 할 일
+('880e8400-e29b-41d4-a716-446655440004', (SELECT id FROM users WHERE login_id = 'user2'), 'User 엔티티 설계 완료', true, '2024-12-13 18:00:00'),
+('880e8400-e29b-41d4-a716-446655440004', (SELECT id FROM users WHERE login_id = 'user4'), NULL, false, NULL)
+ON CONFLICT (todo_id, user_id) DO NOTHING;
+
+-- ============================================
+-- 9. 알림 (Notifications)
+-- ============================================
+INSERT INTO notifications (id, user_id, type, title, content, read, related_id, created_at, updated_at) VALUES
+-- user1의 알림
+('990e8400-e29b-41d4-a716-446655440001', (SELECT id FROM users WHERE login_id = 'user1'), 'MEMBER_INVITED', '알고리즘 스터디에 초대되었습니다', 'admin님이 당신을 알고리즘 스터디에 초대했습니다.', false, (SELECT id FROM studies WHERE invite_code = 'ALGO2024'), NOW(), NOW()),
+('990e8400-e29b-41d4-a716-446655440002', (SELECT id FROM users WHERE login_id = 'user1'), 'TODO_CREATED', '새로운 할 일이 생성되었습니다', '백준 1000번 문제 풀이 할 일이 생성되었습니다.', false, '880e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+('990e8400-e29b-41d4-a716-446655440003', (SELECT id FROM users WHERE login_id = 'user1'), 'SCHEDULE_CONFIRMED', '일정이 확정되었습니다', '1주차 모임 일정이 확정되었습니다.', true, '660e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+
+-- user2의 알림
+('990e8400-e29b-41d4-a716-446655440004', (SELECT id FROM users WHERE login_id = 'user2'), 'MEMBER_INVITED', 'Spring Boot 스터디에 초대되었습니다', 'user1님이 당신을 Spring Boot 스터디에 초대했습니다.', false, (SELECT id FROM studies WHERE invite_code = 'SPRING01'), NOW(), NOW()),
+('990e8400-e29b-41d4-a716-446655440005', (SELECT id FROM users WHERE login_id = 'user2'), 'TODO_DUE_SOON', '할 일 마감이 임박했습니다', '백준 1000번 문제 풀이 할 일의 마감이 하루 남았습니다.', false, '880e8400-e29b-41d4-a716-446655440001', NOW(), NOW()),
+
+-- user3의 알림
+('990e8400-e29b-41d4-a716-446655440006', (SELECT id FROM users WHERE login_id = 'user3'), 'SCHEDULE_CONFIRMED', '일정이 확정되었습니다', '2주차 모임 일정이 확정되었습니다.', false, '660e8400-e29b-41d4-a716-446655440002', NOW(), NOW())
+ON CONFLICT DO NOTHING;
+
+-- ============================================
+-- 데이터 확인 쿼리
+-- ============================================
+-- SELECT 'Users' as table_name, COUNT(*) as count FROM users
+-- UNION ALL
+-- SELECT 'Studies', COUNT(*) FROM studies
+-- UNION ALL
+-- SELECT 'Study Members', COUNT(*) FROM study_members
+-- UNION ALL
+-- SELECT 'Schedules', COUNT(*) FROM schedules
+-- UNION ALL
+-- SELECT 'Schedule Slots', COUNT(*) FROM schedule_slots
+-- UNION ALL
+-- SELECT 'Schedule Availability', COUNT(*) FROM schedule_availability
+-- UNION ALL
+-- SELECT 'Todos', COUNT(*) FROM todos
+-- UNION ALL
+-- SELECT 'Todo Members', COUNT(*) FROM todo_members
+-- UNION ALL
+-- SELECT 'Notifications', COUNT(*) FROM notifications;
+

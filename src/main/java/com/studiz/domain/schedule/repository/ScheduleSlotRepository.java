@@ -14,3 +14,7 @@ public interface ScheduleSlotRepository extends JpaRepository<ScheduleSlot, UUID
     List<ScheduleSlot> findByScheduleOrderByStartTimeAsc(Schedule schedule);
 }
 
+
+
+
+

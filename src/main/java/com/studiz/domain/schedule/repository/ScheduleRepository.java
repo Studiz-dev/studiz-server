@@ -20,3 +20,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
     Optional<Schedule> findByIdAndStudy(UUID id, Study study);
 }
 
+
+
+
+

@@ -84,5 +84,28 @@ public class UserService {
         log.info("프로필 수정: userId={}, newName={}", user.getId(), name);
         return UserProfileResponse.from(user);
     }
+
+    @Transactional
+    public UserProfileResponse updateProfile(User user, String name, String profileImageUrl) {
+        user.updateName(name);
+        // profileImageUrl이 null이 아니고 빈 문자열이 아닐 때만 업데이트
+        if (profileImageUrl != null && !profileImageUrl.isBlank()) {
+            user.updateProfileImageUrl(profileImageUrl);
+        } else if (profileImageUrl != null && profileImageUrl.isBlank()) {
+            // 빈 문자열이면 null로 설정 (프로필 이미지 제거)
+            user.updateProfileImageUrl(null);
+        }
+        log.info("프로필 수정: userId={}, newName={}, profileImageUrl={}", user.getId(), name, profileImageUrl);
+        return UserProfileResponse.from(user);
+    }
+
+    @Transactional(readOnly = true)
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("존재하지 않는 사용자 ID: {}", id);
+                    return new UserNotFoundException();
+                });
+    }
 }
 

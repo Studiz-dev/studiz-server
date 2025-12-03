@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
         description = "회원가입 요청",
         example = "{\n" +
                 "  \"loginId\": \"user123\",\n" +
-                "  \"password\": \"Password123!\",\n" +
+                "  \"password\": \"password123\",\n" +
                 "  \"name\": \"홍길동\",\n" +
                 "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
                 "}"
@@ -29,10 +29,8 @@ public class RegisterRequest {
     private String loginId;
 
     @NotBlank(message = "비밀번호는 필수입니다.")
-    @Size(min = 8, max = 100, message = "비밀번호는 8자 이상이어야 합니다.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]+$", 
-            message = "비밀번호는 대소문자, 숫자, 특수문자를 포함해야 합니다.")
-    @Schema(description = "비밀번호 (8자 이상, 대소문자/숫자/특수문자 포함)", example = "Password123!", required = true)
+    @Size(min = 4, max = 100, message = "비밀번호는 4자 이상이어야 합니다.")
+    @Schema(description = "비밀번호 (4자 이상)", example = "password123", required = true)
     private String password;
 
     @NotBlank(message = "이름은 필수입니다.")
