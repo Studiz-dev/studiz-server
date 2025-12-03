@@ -19,7 +19,7 @@ Content-Type: application/json
 
 {
   "loginId": "user123",
-  "password": "Test1234!@#",
+  "password": "password123",
   "name": "홍길동"
 }
 ```
@@ -38,7 +38,7 @@ Content-Type: application/json
 | 필드 | 필수 | 조건 |
 |------|------|------|
 | loginId | ✅ | 4~20자, 영문/숫자/언더스코어(_)/하이픈(-) 가능 |
-| password | ✅ | 8자 이상, 대소문자/숫자/특수문자 모두 포함 필수 |
+| password | ✅ | 4자 이상 |
 | name | ✅ | 2~50자 |
 
 ### 에러 케이스
@@ -172,7 +172,7 @@ function SignupForm() {
       />
       <input
         type="password"
-        placeholder="비밀번호 (대소문자+숫자+특수문자)"
+        placeholder="비밀번호 (4자 이상)"
         value={formData.password}
         onChange={(e) => setFormData({...formData, password: e.target.value})}
       />
@@ -213,7 +213,7 @@ function SignupForm() {
    ```json
    {
      "loginId": "testuser",
-     "password": "Test1234!@#",
+     "password": "password123",
      "name": "테스터"
    }
    ```

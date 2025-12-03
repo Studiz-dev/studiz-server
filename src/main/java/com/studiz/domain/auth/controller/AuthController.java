@@ -40,14 +40,14 @@ public class AuthController {
                     "```json\n" +
                     "{\n" +
                     "  \"loginId\": \"user123\",\n" +
-                    "  \"password\": \"Password123!\",\n" +
+                    "  \"password\": \"password123\",\n" +
                     "  \"name\": \"홍길동\",\n" +
                     "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
                     "}\n" +
                     "```\n\n" +
                     "**유효성 검사**:\n" +
                     "- `loginId`: 4-20자, 영문/숫자/언더스코어/하이픈만 가능\n" +
-                    "- `password`: 8자 이상, 대소문자/숫자/특수문자 포함 필수\n" +
+                    "- `password`: 4자 이상\n" +
                     "- `name`: 2-50자\n\n" +
                     "**응답**:\n" +
                     "- 생성된 사용자 정보 반환 (HTTP 201)\n\n" +
@@ -79,7 +79,7 @@ public class AuthController {
                     "```json\n" +
                     "{\n" +
                     "  \"loginId\": \"user123\",\n" +
-                    "  \"password\": \"Password123!\"\n" +
+                    "  \"password\": \"password123\"\n" +
                     "}\n" +
                     "```\n\n" +
                     "**응답 내용**:\n" +

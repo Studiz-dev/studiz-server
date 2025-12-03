@@ -10,3 +10,7 @@ public class ScheduleNotFoundException extends CustomException {
     }
 }
 
+
+
+
+

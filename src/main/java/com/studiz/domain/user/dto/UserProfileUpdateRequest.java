@@ -8,7 +8,8 @@ import lombok.Getter;
 @Schema(
         description = "사용자 프로필 수정 요청",
         example = "{\n" +
-                "  \"name\": \"홍길동\"\n" +
+                "  \"name\": \"홍길동\",\n" +
+                "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
                 "}"
 )
 public class UserProfileUpdateRequest {
@@ -16,5 +17,8 @@ public class UserProfileUpdateRequest {
     @NotBlank(message = "이름은 필수입니다.")
     @Schema(description = "변경할 이름", example = "홍길동", required = true)
     private String name;
+
+    @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.jpg", nullable = true)
+    private String profileImageUrl;
 }
 

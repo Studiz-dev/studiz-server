@@ -28,3 +28,7 @@ public interface ScheduleAvailabilityRepository extends JpaRepository<ScheduleAv
     void deleteBySlotIn(List<ScheduleSlot> slots);
 }
 
+
+
+
+

@@ -7,3 +7,7 @@ public enum NotificationType {
     SCHEDULE_CONFIRMED   // 스케줄 확정됨
 }
 
+
+
+
+
