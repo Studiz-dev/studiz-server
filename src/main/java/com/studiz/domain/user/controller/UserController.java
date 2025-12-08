@@ -29,14 +29,28 @@ public class UserController {
     @Operation(
             summary = "내 정보 조회",
             description = "현재 로그인한 사용자의 프로필 정보를 조회합니다.\n\n" +
+                    "**인증**: Bearer Token 필요\n\n" +
                     "**응답 내용**:\n" +
-                    "- 사용자 ID\n" +
-                    "- 로그인 ID\n" +
-                    "- 이름"
+                    "- `id`: 사용자 ID\n" +
+                    "- `loginId`: 로그인 ID\n" +
+                    "- `name`: 사용자 이름\n" +
+                    "- `profileImageUrl`: 프로필 이미지 URL (nullable)\n\n" +
+                    "**응답 예시**:\n" +
+                    "```json\n" +
+                    "{\n" +
+                    "  \"id\": 1,\n" +
+                    "  \"loginId\": \"user123\",\n" +
+                    "  \"name\": \"홍길동\",\n" +
+                    "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
+                    "}\n" +
+                    "```\n\n" +
+                    "**사용 시나리오**:\n" +
+                    "- 로그인 후 사용자 정보 표시\n" +
+                    "- 프로필 페이지에서 사용자 정보 조회"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = UserProfileResponse.class))),
-            @ApiResponse(responseCode = "401", description = "인증 필요")
+            @ApiResponse(responseCode = "401", description = "인증 필요 (토큰이 없거나 유효하지 않음)")
     })
     public ResponseEntity<UserProfileResponse> getMyProfile(
             @AuthenticationPrincipal UserPrincipal userPrincipal
@@ -47,10 +61,11 @@ public class UserController {
     @PatchMapping("/me")
     @Operation(
             summary = "프로필 수정",
-            description = "현재 로그인한 사용자의 이름을 수정합니다.\n\n" +
+            description = "현재 로그인한 사용자의 프로필 정보를 수정합니다.\n\n" +
+                    "**인증**: Bearer Token 필요\n\n" +
                     "**수정 가능한 항목**:\n" +
-                    "- 이름 (name)\n" +
-                    "- 프로필 이미지 URL (profileImageUrl, 선택사항)\n\n" +
+                    "- `name`: 이름 (필수)\n" +
+                    "- `profileImageUrl`: 프로필 이미지 URL (선택사항, null 가능)\n\n" +
                     "**요청 예시**:\n" +
                     "```json\n" +
                     "{\n" +
@@ -58,9 +73,13 @@ public class UserController {
                     "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
                     "}\n" +
                     "```\n\n" +
+                    "**프로필 이미지 제거**:\n" +
+                    "- `profileImageUrl`을 빈 문자열(`\"\"`)로 보내면 프로필 이미지가 제거됩니다.\n" +
+                    "- `null`로 보내면 기존 값이 유지됩니다.\n\n" +
                     "**주의사항**:\n" +
                     "- 로그인 ID는 변경할 수 없습니다.\n" +
-                    "- 이름은 필수이며, 빈 문자열일 수 없습니다."
+                    "- 이름은 필수이며, 빈 문자열일 수 없습니다.\n" +
+                    "- 이름은 1자 이상이어야 합니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(schema = @Schema(implementation = UserProfileResponse.class))),
@@ -81,10 +100,11 @@ public class UserController {
     @PatchMapping("/{id}")
     @Operation(
             summary = "사용자 프로필 수정 (ID로)",
-            description = "특정 사용자의 프로필을 수정합니다.\n\n" +
+            description = "특정 사용자의 프로필을 수정합니다. 본인의 프로필만 수정할 수 있습니다.\n\n" +
+                    "**인증**: Bearer Token 필요\n\n" +
                     "**수정 가능한 항목**:\n" +
-                    "- 이름 (name)\n" +
-                    "- 프로필 이미지 URL (profileImageUrl, 선택사항)\n\n" +
+                    "- `name`: 이름 (필수)\n" +
+                    "- `profileImageUrl`: 프로필 이미지 URL (선택사항, null 가능)\n\n" +
                     "**요청 예시**:\n" +
                     "```json\n" +
                     "{\n" +
@@ -95,7 +115,8 @@ public class UserController {
                     "**주의사항**:\n" +
                     "- 로그인 ID는 변경할 수 없습니다.\n" +
                     "- 이름은 필수이며, 빈 문자열일 수 없습니다.\n" +
-                    "- 본인의 프로필만 수정할 수 있습니다."
+                    "- 본인의 프로필만 수정할 수 있습니다 (다른 사용자 ID로 요청 시 403 에러).\n" +
+                    "- 존재하지 않는 사용자 ID인 경우 404 에러가 반환됩니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수정 성공", content = @Content(schema = @Schema(implementation = UserProfileResponse.class))),

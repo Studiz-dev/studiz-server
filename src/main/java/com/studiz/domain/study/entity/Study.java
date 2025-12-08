@@ -64,7 +64,7 @@ public class Study {
                 .maxMembers(maxMembers)
                 .password(password)
                 .owner(owner)
-                .inviteCode(UUID.randomUUID().toString().substring(0, 8))
+                .inviteCode(UUID.randomUUID().toString().replace("-", "").substring(0, 8))
                 .status(StudyStatus.ACTIVE)
                 .build();
     }

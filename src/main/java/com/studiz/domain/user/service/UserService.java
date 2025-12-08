@@ -75,7 +75,13 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserProfileResponse getProfile(User user) {
-        return UserProfileResponse.from(user);
+        // DB에서 최신 정보를 다시 조회
+        User freshUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> {
+                    log.warn("존재하지 않는 사용자 ID: {}", user.getId());
+                    return new UserNotFoundException();
+                });
+        return UserProfileResponse.from(freshUser);
     }
 
     @Transactional

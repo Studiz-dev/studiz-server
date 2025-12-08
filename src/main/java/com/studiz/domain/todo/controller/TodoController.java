@@ -34,7 +34,13 @@ public class TodoController {
     @Operation(
             summary = "Todo 생성",
             description = "스터디에 새로운 할 일을 생성합니다.\n\n" +
+                    "**인증**: Bearer Token 필요\n\n" +
                     "**권한**: 스터디장만 생성 가능\n\n" +
+                    "**요청 필드**:\n" +
+                    "- `name`: 할 일 이름 (필수)\n" +
+                    "- `dueDate`: 마감일 (필수, ISO 8601 형식: `YYYY-MM-DDTHH:mm:ss`)\n" +
+                    "- `certificationTypes`: 인증 방식 배열 (필수, 최소 1개)\n" +
+                    "- `participantIds`: 참여자 ID 배열 (필수, 최소 1명)\n\n" +
                     "**요청 예시**:\n" +
                     "```json\n" +
                     "{\n" +
@@ -44,13 +50,14 @@ public class TodoController {
                     "  \"participantIds\": [1, 2, 3]\n" +
                     "}\n" +
                     "```\n\n" +
-                    "**인증 방식**:\n" +
+                    "**인증 방식 (certificationTypes)**:\n" +
                     "- `TEXT_NOTE`: 텍스트 인증 (완료 시 텍스트 입력)\n" +
                     "- `FILE_UPLOAD`: 파일 업로드 인증\n" +
-                    "- 두 방식을 함께 선택할 수도 있습니다.\n\n" +
+                    "- 두 방식을 함께 선택할 수 있습니다.\n\n" +
                     "**주의사항**:\n" +
-                    "- `participantIds`에 포함된 사용자는 모두 스터디 멤버여야 합니다.\n" +
-                    "- 참여자 알림은 전송되지 않습니다."
+                    "- `participantIds`에 포함된 사용자는 모두 해당 스터디의 멤버여야 합니다.\n" +
+                    "- 참여자 알림은 전송되지 않습니다.\n" +
+                    "- 스터디장이 아닌 경우 403 에러가 반환됩니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Todo 생성 성공", content = @Content(schema = @Schema(implementation = TodoDetailResponse.class))),
@@ -71,11 +78,20 @@ public class TodoController {
     @Operation(
             summary = "Todo 목록 조회",
             description = "스터디의 모든 할 일 목록을 조회합니다. 마감일 순으로 정렬됩니다.\n\n" +
+                    "**인증**: Bearer Token 필요\n\n" +
                     "**응답 내용**:\n" +
-                    "- Todo 기본 정보 (이름, 설명, 마감일, 인증 방식)\n" +
-                    "- 완료 상태\n" +
-                    "- 완료된 참여자 수 / 전체 참여자 수\n\n" +
-                    "**권한**: 스터디 멤버만 접근 가능"
+                    "- Todo 배열 (각 Todo마다 다음 정보 포함)\n" +
+                    "  - `id`: Todo ID (UUID)\n" +
+                    "  - `name`: 할 일 이름\n" +
+                    "  - `dueDate`: 마감일\n" +
+                    "  - `certificationTypes`: 인증 방식 배열\n" +
+                    "  - `status`: 완료 상태 (COMPLETED, IN_PROGRESS)\n" +
+                    "  - `completedCount`: 완료된 참여자 수\n" +
+                    "  - `totalCount`: 전체 참여자 수\n\n" +
+                    "**권한**: 스터디 멤버만 접근 가능\n\n" +
+                    "**주의사항**:\n" +
+                    "- 스터디에 가입하지 않은 사용자는 접근할 수 없습니다 (403 에러).\n" +
+                    "- 존재하지 않는 스터디 ID인 경우 404 에러가 반환됩니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = TodoResponse.class))),
@@ -94,11 +110,15 @@ public class TodoController {
     @Operation(
             summary = "Todo 상세 조회",
             description = "특정 할 일의 상세 정보를 조회합니다.\n\n" +
+                    "**인증**: Bearer Token 필요\n\n" +
                     "**응답 내용**:\n" +
-                    "- 모임명, 완료 기한, 할 일명, 완료율(%)\n" +
-                    "- 완료 멤버 목록 + 인증 파일/소감문(완료 멤버 클릭 시 확인)\n" +
+                    "- Todo 기본 정보 (이름, 마감일, 인증 방식, 완료율 등)\n" +
+                    "- 완료 멤버 목록 (각 멤버의 인증 내용 포함)\n" +
                     "- 미완료 멤버 목록\n\n" +
-                    "**권한**: 스터디 멤버만 접근 가능"
+                    "**권한**: 스터디 멤버만 접근 가능\n\n" +
+                    "**주의사항**:\n" +
+                    "- 스터디에 가입하지 않은 사용자는 접근할 수 없습니다 (403 에러).\n" +
+                    "- 존재하지 않는 Todo ID인 경우 404 에러가 반환됩니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = TodoDetailResponse.class))),
@@ -119,6 +139,12 @@ public class TodoController {
     @Operation(
             summary = "Todo 완료 처리",
             description = "할 일을 완료 처리합니다. 참여자만 완료할 수 있습니다.\n\n" +
+                    "**인증**: Bearer Token 필요\n\n" +
+                    "**권한**: 해당 Todo의 참여자만 완료 가능\n\n" +
+                    "**요청 필드**:\n" +
+                    "- `content`: 인증 내용 (필수)\n" +
+                    "  - TEXT_NOTE 인증: 완료 소감이나 설명을 입력\n" +
+                    "  - FILE_UPLOAD 인증: 파일 업로드 후 설명을 입력\n\n" +
                     "**요청 예시**:\n" +
                     "```json\n" +
                     "{\n" +
@@ -126,12 +152,15 @@ public class TodoController {
                     "}\n" +
                     "```\n\n" +
                     "**동작**:\n" +
-                    "- 현재 사용자가 해당 Todo의 참여자인지 확인합니다.\n" +
-                    "- 인증 내용을 저장하고 완료 상태로 변경합니다.\n" +
-                    "- 모든 참여자가 완료하면 Todo도 자동으로 완료 상태가 됩니다.\n\n" +
+                    "1. 현재 사용자가 해당 Todo의 참여자인지 확인합니다.\n" +
+                    "2. 인증 내용을 저장하고 완료 상태로 변경합니다.\n" +
+                    "3. 모든 참여자가 완료하면 Todo도 자동으로 완료 상태가 됩니다.\n\n" +
+                    "**응답**:\n" +
+                    "- 성공 시: `\"할 일이 완료되었습니다.\"` 메시지 반환\n\n" +
                     "**주의사항**:\n" +
-                    "- 이미 완료한 Todo는 다시 완료할 수 없습니다.\n" +
-                    "- `content`는 필수이며, 인증 방식에 따라 다른 내용을 입력합니다."
+                    "- 이미 완료한 Todo는 다시 완료할 수 없습니다 (400 에러).\n" +
+                    "- `content`는 필수이며, 빈 문자열일 수 없습니다.\n" +
+                    "- 참여자가 아닌 경우 403 에러가 반환됩니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "완료 처리 성공"),

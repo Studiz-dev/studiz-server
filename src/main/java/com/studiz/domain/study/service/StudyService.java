@@ -1,6 +1,7 @@
 package com.studiz.domain.study.service;
 
 import com.studiz.domain.study.dto.StudyDetailResponse;
+import com.studiz.domain.study.dto.StudyResponse;
 import com.studiz.domain.study.dto.StudyUpdateRequest;
 import com.studiz.domain.study.entity.Study;
 import com.studiz.domain.study.exception.StudyNotFoundException;
@@ -10,11 +11,13 @@ import com.studiz.domain.studymember.entity.StudyMemberRole;
 import com.studiz.domain.studymember.repository.StudyMemberRepository;
 import com.studiz.domain.studymember.service.StudyMemberService;
 import com.studiz.domain.user.entity.User;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +78,14 @@ public class StudyService {
         Study study = getStudy(studyId);
         studyMemberService.ensureMember(study, user);
         return StudyDetailResponse.from(study, studyMemberService.getMembers(study));
+    }
+    
+    @Transactional(readOnly = true)
+    public List<StudyResponse> getMyStudies(User user) {
+        List<StudyMember> members = studyMemberRepository.findByUser(user);
+        return members.stream()
+                .map(StudyMember::getStudy)
+                .map(StudyResponse::from)
+                .collect(Collectors.toList());
     }
 }

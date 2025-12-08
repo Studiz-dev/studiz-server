@@ -36,6 +36,12 @@ public class AuthController {
     @Operation(
             summary = "회원가입",
             description = "새로운 사용자를 등록합니다.\n\n" +
+                    "**인증**: 불필요 (Public API)\n\n" +
+                    "**요청 필드**:\n" +
+                    "- `loginId`: 로그인 ID (필수, 4-20자, 영문/숫자/언더스코어/하이픈만 가능)\n" +
+                    "- `password`: 비밀번호 (필수, 4자 이상)\n" +
+                    "- `name`: 사용자 이름 (필수, 2-50자)\n" +
+                    "- `profileImageUrl`: 프로필 이미지 URL (선택사항)\n\n" +
                     "**요청 예시**:\n" +
                     "```json\n" +
                     "{\n" +
@@ -45,13 +51,16 @@ public class AuthController {
                     "  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n" +
                     "}\n" +
                     "```\n\n" +
-                    "**유효성 검사**:\n" +
-                    "- `loginId`: 4-20자, 영문/숫자/언더스코어/하이픈만 가능\n" +
-                    "- `password`: 4자 이상\n" +
-                    "- `name`: 2-50자\n\n" +
-                    "**응답**:\n" +
-                    "- 생성된 사용자 정보 반환 (HTTP 201)\n\n" +
+                    "**응답 예시**:\n" +
+                    "```json\n" +
+                    "{\n" +
+                    "  \"id\": 1,\n" +
+                    "  \"loginId\": \"user123\",\n" +
+                    "  \"name\": \"홍길동\"\n" +
+                    "}\n" +
+                    "```\n\n" +
                     "**에러 케이스**:\n" +
+                    "- 400: 유효성 검사 실패 (필드 형식 오류)\n" +
                     "- 409: 이미 사용 중인 아이디"
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponses({
@@ -75,6 +84,10 @@ public class AuthController {
     @Operation(
             summary = "로그인",
             description = "로그인 성공 시 JWT 토큰을 발급합니다.\n\n" +
+                    "**인증**: 불필요 (Public API)\n\n" +
+                    "**요청 필드**:\n" +
+                    "- `loginId`: 로그인 ID (필수)\n" +
+                    "- `password`: 비밀번호 (필수)\n\n" +
                     "**요청 예시**:\n" +
                     "```json\n" +
                     "{\n" +
@@ -84,10 +97,24 @@ public class AuthController {
                     "```\n\n" +
                     "**응답 내용**:\n" +
                     "- `accessToken`: API 호출 시 사용할 JWT 토큰\n" +
-                    "- `refreshToken`: Access Token 갱신용 토큰\n" +
+                    "- `refreshToken`: Access Token 갱신용 토큰 (현재 미사용)\n" +
                     "- `tokenType`: \"Bearer\" (Authorization 헤더에 사용)\n" +
-                    "- 사용자 정보 (userId, loginId, name)\n\n" +
+                    "- `user`: 사용자 정보 (id, loginId, name)\n\n" +
+                    "**응답 예시**:\n" +
+                    "```json\n" +
+                    "{\n" +
+                    "  \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n" +
+                    "  \"refreshToken\": \"...\",\n" +
+                    "  \"tokenType\": \"Bearer\",\n" +
+                    "  \"user\": {\n" +
+                    "    \"id\": 1,\n" +
+                    "    \"loginId\": \"user123\",\n" +
+                    "    \"name\": \"홍길동\"\n" +
+                    "  }\n" +
+                    "}\n" +
+                    "```\n\n" +
                     "**토큰 사용 방법**:\n" +
+                    "발급받은 `accessToken`을 Authorization 헤더에 포함하여 인증이 필요한 API를 호출합니다.\n" +
                     "```\n" +
                     "Authorization: Bearer {accessToken}\n" +
                     "```\n\n" +
